@@ -498,7 +498,7 @@
     <div class="hero-grid">
       <div>
         <p class="bio">
-          DevOps Engineer with 3-5 years of experience designing and operating cloud-native infrastructure that stays reliable at scale — provisioning environments as code with Terraform, orchestrating workloads on Kubernetes, and automating the CI/CD pipelines that ship them. Resilience and repeatability aren't an afterthought; they're the platform.
+          DevOps Engineer with 5+ years of experience designing and operating cloud-native infrastructure that stays reliable at scale — provisioning environments as code with Terraform, orchestrating workloads on Kubernetes, and directing Claude Code as a plan-reviewed agent on live infrastructure changes. Resilience and repeatability aren't an afterthought; they're the platform.
         </p>
         <div class="cta-row">
           <a class="btn btn-primary" href="mailto:kwesianane09@gmail.com">Email me →</a>
@@ -506,11 +506,11 @@
           <a class="btn btn-ghost" href="https://www.linkedin.com/in/moses-sarpong-77b3053a8" target="_blank" rel="noopener">Connect on LinkedIn</a>
         </div>
         <div class="stats-row">
-          <div class="stat"><span class="stat-num">3-5</span><span class="stat-label">years experience</span></div>
+          <div class="stat"><span class="stat-num">5+</span><span class="stat-label">years experience</span></div>
           <div class="stat-divider"></div>
           <div class="stat"><span class="stat-num">CKAD</span><span class="stat-label">certified</span></div>
           <div class="stat-divider"></div>
-          <div class="stat"><span class="stat-num">7</span><span class="stat-label">core tools</span></div>
+          <div class="stat"><span class="stat-num">40+</span><span class="stat-label">services in production</span></div>
         </div>
       </div>
 
@@ -526,10 +526,11 @@
 <div class="indent1"><span class="key">name</span>: <span class="string">moses-sarpong</span></div>
 <div class="indent1"><span class="key">location</span>: <span class="string">remote-ready</span></div>
 <div><span class="key">spec</span>:</div>
-<div class="indent1"><span class="key">experience</span>: <span class="string">3-5 years</span></div>
+<div class="indent1"><span class="key">experience</span>: <span class="string">5+ years</span></div>
 <div class="indent1"><span class="key">certifications</span>:</div>
 <div class="indent2">- <span class="string">CKAD</span></div>
 <div class="indent1"><span class="key">focus</span>:</div>
+<div class="indent2">- <span class="string">agentic-ai</span></div>
 <div class="indent2">- <span class="string">kubernetes</span></div>
 <div class="indent2">- <span class="string">terraform</span></div>
 <div class="indent2">- <span class="string">aws</span></div>
@@ -548,6 +549,12 @@
       <h2>Technical toolkit</h2>
     </div>
     <div class="skills-grid">
+
+      <div class="skill-card reveal">
+        <div class="skill-comment"># agentic-ai</div>
+        <div class="skill-head"><span class="skill-icon">🤖</span><h3>Agentic AI</h3></div>
+        <p>Claude Code as a plan-reviewed agent on live Terraform/Helm changes — including a self-built Terraform PR-review skill</p>
+      </div>
 
       <div class="skill-card reveal">
         <div class="skill-comment"># aws</div>
@@ -620,21 +627,21 @@
     <div class="projects-list">
 
       <div class="project-card reveal">
-        <div class="project-cmd"><span class="prompt">$</span>kubectl apply -f kubernetes-quotes-api/</div>
-        <h3>Kubernetes Quotes API</h3>
-        <p>Re-platformed Docker Compose applications onto Kubernetes, wiring up Secrets, Services, Deployments, and Persistent Volumes for production readiness.</p>
-      </div>
-
-      <div class="project-card reveal">
         <div class="project-cmd"><span class="prompt">$</span>kubectl apply -f gateway-api-migration.yaml</div>
         <h3>Gateway API Migration</h3>
-        <p>Modernized traffic routing by migrating from Ingress to the Gateway API standard, powered by the AWS Load Balancer Controller.</p>
+        <p>Led a Terraform/Helm migration at vAuto from a single shared ingress-nginx config to per-team Gateway API + ALB routing — directed Claude Code through a plan-first, diff-reviewed process, shipped in ~2 weeks across a 6-person team.</p>
       </div>
 
       <div class="project-card reveal">
         <div class="project-cmd"><span class="prompt">$</span>terraform apply -var-file=aws-infra.tfvars</div>
-        <h3>Terraform AWS Infrastructure</h3>
-        <p>Stood up cloud infrastructure as code using reusable Terraform modules and centralized remote state.</p>
+        <h3>EKS Platform on Terraform</h3>
+        <p>Engineered a 3-cluster EKS platform (dev/staging/production, ~40+ services) at vAuto, including reusable Terraform modules for VPC, IAM, and S3 since adopted by another team.</p>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-cmd"><span class="prompt">$</span>claude-code run terraform-pr-review</div>
+        <h3>Terraform PR Review Skill</h3>
+        <p>Built a self-directed Claude Code skill that reviews Terraform PRs for missing IAM permissions and duplicate resources — cutting my own review time by ~30%.</p>
       </div>
 
       <div class="project-card reveal">
