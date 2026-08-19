@@ -296,6 +296,130 @@
     font-weight: 600;
   }
 
+  /* ---------- INFRASTRUCTURE ---------- */
+  .infra-intro{
+    color: var(--text-muted);
+    max-width: 60ch;
+    margin-top: -22px;
+    margin-bottom: 32px;
+    font-size: 0.95rem;
+  }
+  .infra-diagram{
+    display:flex;
+    flex-wrap: wrap;
+    align-items:flex-start;
+    gap: 2px 0;
+  }
+  @media (max-width: 860px){
+    .infra-diagram{ flex-direction:column; gap:10px; }
+  }
+  .infra-arrow{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 15px;
+    flex-shrink:0;
+    width: 22px;
+    padding-top: 34px;
+  }
+  @media (max-width: 860px){
+    .infra-arrow{ width:auto; height:auto; padding:0; transform: rotate(90deg); }
+  }
+  .infra-node{
+    flex: 1 1 0;
+    min-width: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color .18s ease, background .18s ease;
+  }
+  .infra-node[open]{
+    border-color: var(--teal);
+    background: var(--surface-hover);
+    flex: 1 1 100%;
+    order: 99;
+  }
+  .infra-node summary{
+    list-style:none;
+    cursor:pointer;
+    padding: 16px 12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap: 9px;
+  }
+  .infra-node summary::-webkit-details-marker{ display:none; }
+  .infra-icon{ font-size: 1.25rem; }
+  .infra-name{
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+  .infra-status{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: var(--teal);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 3px 9px 3px 7px;
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    white-space: nowrap;
+  }
+  .infra-status::before{
+    content:"";
+    width:5px; height:5px; border-radius:50%;
+    background: var(--teal);
+    box-shadow: 0 0 6px var(--teal);
+  }
+  .infra-chevron{
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--text-faint);
+  }
+  .infra-node:not([open]) .infra-chevron::before{ content:"▸ expand"; }
+  .infra-node[open] .infra-chevron::before{ content:"▾ collapse"; }
+
+  .infra-session{
+    border-top: 1px solid var(--border);
+    padding: 20px 22px 24px;
+  }
+  .infra-session-bar{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--amber);
+    margin-bottom: 16px;
+  }
+  .infra-session-bar .prompt{ color: var(--text-faint); margin-right: 6px; }
+  .infra-session dt{
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-faint);
+    margin-top: 14px;
+  }
+  .infra-session dt:first-child{ margin-top:0; }
+  .infra-session dd{
+    color: var(--text-muted);
+    font-size: 0.93rem;
+    margin-top: 5px;
+    max-width: 68ch;
+  }
+  .infra-session code{
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    color: var(--teal);
+    background: var(--border-soft);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
   /* ---------- SKILLS ---------- */
   .skills-grid{
     display:grid;
@@ -466,6 +590,7 @@
     <nav>
       <div class="logo">moses<span class="dim">@</span>infra<span class="dim">:~$</span></div>
       <div class="nav-links">
+        <a href="#infrastructure">infra</a>
         <a href="#skills">skills</a>
         <a href="#certifications">certifications</a>
         <a href="#projects">projects</a>
@@ -538,6 +663,150 @@
 <div class="indent1"><span class="key">status</span>: <span class="string">Open to opportunities</span><span class="cursor"></span></div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section id="infrastructure">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kind">kind: <b>Infrastructure</b></span>
+      <h2>Live architecture</h2>
+    </div>
+    <p class="infra-intro reveal">A snapshot of the real pipeline, not a live feed — click a node for the plan → diff → review behind it.</p>
+
+    <div class="infra-diagram reveal">
+
+      <details class="infra-node">
+        <summary>
+          <span class="infra-icon">🔀</span>
+          <span class="infra-name">GitHub</span>
+          <span class="infra-status">OPERATIONAL</span>
+          <span class="infra-chevron"></span>
+        </summary>
+        <div class="infra-session">
+          <div class="infra-session-bar"><span class="prompt">$</span>branch → PR → review</div>
+          <dl>
+            <dt>Situation</dt>
+            <dd>Every infrastructure change — Terraform, Helm, CI config — starts as a branch, never a direct edit to main.</dd>
+            <dt>Action</dt>
+            <dd>Claude Code drafts the diff when I'm directing it as an agent; I review every line before it merges, same bar whether the agent wrote it or I did.</dd>
+            <dt>Result</dt>
+            <dd>A clean audit trail — every change traceable to a PR, a review, and a reason.</dd>
+          </dl>
+        </div>
+      </details>
+
+      <div class="infra-arrow">→</div>
+
+      <details class="infra-node">
+        <summary>
+          <span class="infra-icon">⚙️</span>
+          <span class="infra-name">CI/CD</span>
+          <span class="infra-status">DEPLOYED</span>
+          <span class="infra-chevron"></span>
+        </summary>
+        <div class="infra-session">
+          <div class="infra-session-bar"><span class="prompt">$</span>build → test → promote → gate</div>
+          <dl>
+            <dt>Situation</dt>
+            <dd>Manual deploys don't scale past a couple of services, and catching problems after production is expensive.</dd>
+            <dt>Action</dt>
+            <dd>GitHub Actions builds and tests in dev, auto-promotes to staging, and gates production behind manual approval. Validation — Terraform plan/validate, app tests, image checks, deployment health checks — happens as early as possible.</dd>
+            <dt>Result</dt>
+            <dd>Staging ships daily, production about twice a week, with OIDC federation instead of static AWS keys in the pipeline.</dd>
+          </dl>
+        </div>
+      </details>
+
+      <div class="infra-arrow">→</div>
+
+      <details class="infra-node">
+        <summary>
+          <span class="infra-icon">🏗️</span>
+          <span class="infra-name">Terraform</span>
+          <span class="infra-status">OPERATIONAL</span>
+          <span class="infra-chevron"></span>
+        </summary>
+        <div class="infra-session">
+          <div class="infra-session-bar"><span class="prompt">$</span>plan → apply (agent-directed)</div>
+          <dl>
+            <dt>Situation</dt>
+            <dd>Directed Claude Code to add a VPC endpoint as part of the Gateway API migration (see Kubernetes).</dd>
+            <dt>Action</dt>
+            <dd>The agent didn't check what already existed and wrote a duplicate. <code>terraform plan</code> surfaced the conflict before apply — caught in review.</dd>
+            <dt>Result</dt>
+            <dd>Zero blast radius — never touched real infra. Changed the workflow afterward: the agent now checks existing state before writing a new resource.</dd>
+          </dl>
+        </div>
+      </details>
+
+      <div class="infra-arrow">→</div>
+
+      <details class="infra-node">
+        <summary>
+          <span class="infra-icon">☁️</span>
+          <span class="infra-name">AWS</span>
+          <span class="infra-status">OPERATIONAL</span>
+          <span class="infra-chevron"></span>
+        </summary>
+        <div class="infra-session">
+          <div class="infra-session-bar"><span class="prompt">$</span>aws sts assume-role (OIDC)</div>
+          <dl>
+            <dt>Situation</dt>
+            <dd>CI/CD used long-lived static AWS access keys — a standing credential-exposure risk.</dd>
+            <dt>Action</dt>
+            <dd>Replaced them with OIDC federation. GitHub Actions now assumes a scoped IAM role via the cluster's OIDC provider on each run instead of storing a secret.</dd>
+            <dt>Result</dt>
+            <dd>No long-lived AWS credentials left in CI/CD, across 3 accounts (dev, staging, production).</dd>
+          </dl>
+        </div>
+      </details>
+
+      <div class="infra-arrow">→</div>
+
+      <details class="infra-node">
+        <summary>
+          <span class="infra-icon">☸️</span>
+          <span class="infra-name">Kubernetes</span>
+          <span class="infra-status">DEPLOYED</span>
+          <span class="infra-chevron"></span>
+        </summary>
+        <div class="infra-session">
+          <div class="infra-session-bar"><span class="prompt">$</span>helm upgrade --install</div>
+          <dl>
+            <dt>Situation</dt>
+            <dd>One shared, centrally-controlled ingress-nginx config routed every team's traffic — a routing problem for one team could affect all of them.</dd>
+            <dt>Action</dt>
+            <dd>Led a ~2-week migration to Gateway API + ALB, giving each team its own routing rules. Planned it stage by stage with Claude Code, diff reviewed before anything applied, coordinated with a 6-person team.</dd>
+            <dt>Result</dt>
+            <dd>Routing issues now stay scoped to the team that caused them. 3-cluster EKS platform, ~40+ services, all on Terraform and Helm.</dd>
+          </dl>
+        </div>
+      </details>
+
+      <div class="infra-arrow">→</div>
+
+      <details class="infra-node">
+        <summary>
+          <span class="infra-icon">📊</span>
+          <span class="infra-name">Monitoring</span>
+          <span class="infra-status">OPERATIONAL</span>
+          <span class="infra-chevron"></span>
+        </summary>
+        <div class="infra-session">
+          <div class="infra-session-bar"><span class="prompt">$</span>datadog alert → root-cause → resolve</div>
+          <dl>
+            <dt>Situation</dt>
+            <dd>Customers couldn't reach the application — a full external-facing outage, on the ALB from the Gateway API migration.</dd>
+            <dt>Action</dt>
+            <dd>A Datadog alert paged me directly. Reviewed the ALB's listener and routing rules and found requests being routed incorrectly.</dd>
+            <dt>Result</dt>
+            <dd>Fixed in about 15 minutes, alert to resolution. The dashboards and alerts themselves are self-built — I configure the thresholds and page routing.</dd>
+          </dl>
+        </div>
+      </details>
+
     </div>
   </div>
 </section>
