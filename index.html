@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Moses Sarpong — DevOps & Cloud Engineer</title>
 <meta name="description" content="Moses Sarpong — DevOps & Cloud Engineer specializing in Kubernetes, Terraform, AWS, Docker, and CI/CD automation.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230B1220'/%3E%3Ctext x='50' y='67' font-family='monospace' font-size='54' fill='%23F2B705' text-anchor='middle'%3E%3E_%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mosarp.com">
+<meta property="og:title" content="Moses Sarpong — DevOps & Cloud Engineer">
+<meta property="og:description" content="DevOps Engineer with 5+ years operating cloud-native infrastructure — Kubernetes, Terraform, AWS, and CI/CD, directing Claude Code as a plan-reviewed agent on live infrastructure changes.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Moses Sarpong — DevOps & Cloud Engineer">
+<meta name="twitter:description" content="DevOps Engineer with 5+ years operating cloud-native infrastructure — Kubernetes, Terraform, AWS, and CI/CD automation.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -119,8 +127,40 @@
   .socials a:hover{ color: var(--amber); }
   .socials svg{ width:18px; height:18px; }
 
+  .nav-toggle{
+    display:none;
+    background:none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 9px;
+    cursor: pointer;
+  }
+  .nav-toggle span{
+    display:block;
+    width: 18px;
+    height: 2px;
+    background: var(--text);
+    margin: 3px 0;
+    transition: transform .2s ease, opacity .2s ease;
+  }
+
   @media (max-width: 720px){
-    .nav-links{ display:none; }
+    nav{ flex-wrap: wrap; }
+    .nav-toggle{ display:block; order: 3; }
+    .status-pill{ display:none; }
+    .nav-links{
+      display:none;
+      width: 100%;
+      order: 4;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      padding-top: 14px;
+      margin-top: 14px;
+      border-top: 1px solid var(--border-soft);
+    }
+    .nav-links a{ padding: 8px 0; width:100%; }
+    nav.open .nav-links{ display:flex; }
   }
 
   /* ---------- HERO ---------- */
@@ -212,6 +252,23 @@
     height: 30px;
     background: var(--border);
   }
+
+  .hl{ color: var(--teal); font-weight: 600; }
+
+  /* ---------- MANIFESTO DIVIDER ---------- */
+  .manifesto{
+    border-top: 1px solid var(--border-soft);
+    padding: 34px 0;
+    text-align: center;
+  }
+  .manifesto p{
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    max-width: 64ch;
+    margin: 0 auto;
+  }
+  .manifesto-mark{ color: var(--amber); margin-right: 8px; }
 
   /* Manifest card - signature element */
   .manifest{
@@ -596,6 +653,9 @@
           </a>
         </div>
       </div>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </nav>
   </div>
 </header>
@@ -608,7 +668,7 @@
     <div class="hero-grid">
       <div>
         <p class="bio">
-          DevOps Engineer with 5+ years of experience designing and operating cloud-native infrastructure that stays reliable at scale — provisioning environments as code with Terraform, orchestrating workloads on Kubernetes, and directing Claude Code as a plan-reviewed agent on live infrastructure changes. Resilience and repeatability aren't an afterthought; they're the platform.
+          DevOps Engineer with 5+ years of experience designing and operating cloud-native infrastructure that stays reliable at scale — provisioning environments as code with Terraform, orchestrating workloads on Kubernetes, and <span class="hl">directing Claude Code as a plan-reviewed agent on live infrastructure changes</span>.
         </p>
         <div class="cta-row">
           <a class="btn btn-primary" href="mailto:kwesianane09@gmail.com">Email me →</a>
@@ -621,6 +681,8 @@
           <div class="stat"><span class="stat-num">CKAD</span><span class="stat-label">certified</span></div>
           <div class="stat-divider"></div>
           <div class="stat"><span class="stat-num">40+</span><span class="stat-label">services in production</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat"><span class="stat-num">15 min</span><span class="stat-label">alert → resolution</span></div>
         </div>
       </div>
 
@@ -651,6 +713,12 @@
     </div>
   </div>
 </section>
+
+<div class="manifesto reveal">
+  <div class="wrap">
+    <p><span class="manifesto-mark">▸</span>Resilience and repeatability aren't an afterthought — they're the platform. Every agent-drafted diff gets the same review bar as my own.</p>
+  </div>
+</div>
 
 <section id="infrastructure">
   <div class="wrap">
@@ -932,6 +1000,18 @@
 </footer>
 
 <script>
+  const navToggle = document.querySelector('.nav-toggle');
+  const navEl = document.querySelector('nav');
+  if (navToggle && navEl) {
+    navToggle.addEventListener('click', () => {
+      const open = navEl.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', open);
+    });
+    document.querySelectorAll('.nav-links a').forEach((link) => {
+      link.addEventListener('click', () => navEl.classList.remove('open'));
+    });
+  }
+
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if(e.isIntersecting){
