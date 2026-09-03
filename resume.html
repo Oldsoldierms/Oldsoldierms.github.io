@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moses Sarpong — Resume</title>
+<style>
+  @page{ size: letter; margin: 0.42in 0.6in; }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    font-size: 10pt;
+    line-height: 1.3;
+    max-width: 7.6in;
+    margin: 0 auto;
+  }
+  header{ margin-bottom: 6px; }
+  h1{ font-size: 19pt; font-weight: 700; letter-spacing: -0.01em; }
+  .role-line{ font-size: 10.2pt; font-weight: 600; color: #333; margin-top: 2px; }
+  .contact-line{ font-size: 9pt; color: #4a4a4a; margin-top: 4px; }
+  .contact-line a{ color: #4a4a4a; text-decoration: none; }
+  h2{
+    font-size: 9.3pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1.2px solid #1a1a1a;
+    padding-bottom: 2px;
+    margin: 8px 0 4px;
+  }
+  section:first-of-type h2{ margin-top: 4px; }
+  p.summary{ font-size: 9.6pt; color: #262626; }
+  .role{ margin-bottom: 5px; }
+  .role:last-child{ margin-bottom: 0; }
+  .role-head{
+    display:flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 10.1pt;
+    font-weight: 700;
+  }
+  .role-dates{ font-size: 9pt; font-weight: 500; color: #4a4a4a; white-space: nowrap; }
+  .role-sub{ font-size: 9pt; color: #4a4a4a; margin-bottom: 2px; }
+  ul{ margin: 0; padding-left: 16px; }
+  li{ font-size: 9.5pt; color: #262626; margin-bottom: 1.5px; }
+  .skills-row{ font-size: 9.3pt; margin-bottom: 2px; color: #262626; }
+  .skills-row b{ color: #1a1a1a; }
+  .edu-line{ font-size: 9.5pt; color: #262626; margin-bottom: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Moses Sarpong</h1>
+  <p class="role-line">Platform Engineer · AWS · Kubernetes · Terraform · Agentic AI Workflows</p>
+  <p class="contact-line">
+    Chicago, IL &nbsp;·&nbsp; <a href="mailto:kwesianane09@gmail.com">kwesianane09@gmail.com</a> &nbsp;·&nbsp; 917-860-4981 &nbsp;·&nbsp;
+    <a href="https://www.linkedin.com/in/moses-sarpong-77b3053a8">linkedin.com/in/moses-sarpong-77b3053a8</a> &nbsp;·&nbsp;
+    <a href="https://mosarp.com">mosarp.com</a> &nbsp;·&nbsp;
+    <a href="https://github.com/Oldsoldierms">github.com/Oldsoldierms</a>
+  </p>
+</header>
+
+<section>
+  <h2>Summary</h2>
+  <p class="summary">Platform/DevOps Engineer with 5 years of experience building cloud platforms across automotive and healthcare environments. Build secure, automated infrastructure and delivery systems with Terraform, Kubernetes, Helm, and GitHub Actions. Built an AI PR reviewer and incident-diagnostic workflow with Claude Code and GitHub MCP, catching 3 real infrastructure issues a week before they reach production.</p>
+</section>
+
+<section>
+  <h2>Experience</h2>
+
+  <div class="role">
+    <div class="role-head"><span>Platform Engineer — vAuto (Cox Automotive)</span><span class="role-dates">Apr 2023 – Present</span></div>
+    <div class="role-sub">Chicago, IL</div>
+    <ul>
+      <li>Built an AI PR reviewer using Claude Code and GitHub MCP across 80 repositories, reviewing 30 infra PRs/week and catching 3 real issues weekly — IAM widening, drift, and unsafe Helm changes — before merge; cut review turnaround from 1 day to same-day merges and saved 5 hours/week of manual review time.</li>
+      <li>Built specialized Claude Code agent skills covering Terraform plan review, Kubernetes manifest linting, RBAC audit, and Gateway API/Helm template validation, standardizing what the reviewer checks across every PR.</li>
+      <li>Built an AI incident-diagnostic workflow correlating Kubernetes pod state, GitHub/deployment history, and Terraform changes to identify the most likely production root cause.</li>
+      <li>Led the migration from shared ingress-nginx to Gateway API + ALB across 50+ microservices, creating team-level routing boundaries and reducing shared failure-domain risk.</li>
+      <li>Standardized AWS infrastructure across 6 EKS clusters with reusable Terraform modules, giving ~15 engineering teams a consistent provisioning model.</li>
+      <li>Built GitHub Actions delivery pipelines with OIDC, automated testing, staged promotions, and production approvals, supporting daily staging releases and ~2 production releases per week.</li>
+    </ul>
+  </div>
+
+  <div class="role">
+    <div class="role-head"><span>DevOps Engineer — Rally Health (health insurance/wellness platform)</span><span class="role-dates">Feb 2021 – Mar 2023</span></div>
+    <div class="role-sub">Chicago, IL</div>
+    <ul>
+      <li>Led the migration from CloudFormation to Terraform for VPC, DNS, database, cache, and queue infrastructure, with reusable modules later adopted by 3 additional engineering teams.</li>
+      <li>Owned Helm-based releases for ~12 production microservices, shifting validation earlier in CI/CD and reducing deployment-related incidents by ~20%.</li>
+      <li>Built Python and Bash automation around AWS, Docker, and kubectl workflows, eliminating recurring manual cleanup and reporting work and saving engineers several hours per week.</li>
+      <li>Automated recurring operational workflows with scheduled and event-driven AWS Lambda functions, reducing manual intervention across production support tasks.</li>
+      <li>Engineered CloudWatch-driven EC2 Auto Scaling policies that adjusted capacity with workload demand while reducing unnecessary provisioned capacity.</li>
+      <li>Established reusable infrastructure and access patterns through Terraform, IAM, RBAC, and peer-reviewed changes, giving multiple teams a consistent operating model.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>Skills</h2>
+  <p class="skills-row"><b>Cloud &amp; Infrastructure:</b> AWS (EKS, VPC, IAM, ALB/NLB, Lambda), Kubernetes, Docker, Linux</p>
+  <p class="skills-row"><b>Infrastructure as Code &amp; Delivery:</b> Terraform, Helm, GitHub Actions, OIDC-based CI/CD, shift-left validation, staged deployments</p>
+  <p class="skills-row"><b>Cloud Security:</b> IAM least-privilege, secrets management, image signing, audit logging, RBAC, infrastructure security reviews</p>
+  <p class="skills-row"><b>AI &amp; Agentic Automation:</b> Claude Code, custom agent skills, GitHub MCP, AI PR review, Terraform/Kubernetes analysis, incident diagnostics, context engineering</p>
+  <p class="skills-row"><b>Observability &amp; Reliability:</b> Datadog, CloudWatch, alerting, operational analysis, incident response, production troubleshooting</p>
+  <p class="skills-row"><b>Scripting &amp; Automation:</b> Python (boto3), Bash, AWS CLI, kubectl</p>
+</section>
+
+<section>
+  <h2>Education &amp; Certifications</h2>
+  <p class="edu-line">312School — Platform Engineering Program</p>
+  <p class="edu-line">Certified Kubernetes Application Developer (CKAD)</p>
+</section>
+
+</body>
+</html>
