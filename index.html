@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Moses Sarpong — DevOps & Cloud Engineer</title>
-<meta name="description" content="Moses Sarpong — DevOps & Cloud Engineer specializing in Kubernetes, Terraform, AWS, Docker, and CI/CD automation.">
+<title>Moses Sarpong — Platform Engineer</title>
+<meta name="description" content="Moses Sarpong — Platform Engineer specializing in Kubernetes, Terraform, AWS, and agentic AI infrastructure automation with Claude Code.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -603,12 +603,12 @@
 <section class="hero">
   <div class="wrap">
     <h1>Moses Sarpong</h1>
-    <p class="role">DevOps & <span>Cloud Engineer</span></p>
+    <p class="role">Platform & <span>DevOps Engineer</span></p>
 
     <div class="hero-grid">
       <div>
         <p class="bio">
-          DevOps Engineer with 5+ years of experience designing and operating cloud-native infrastructure that stays reliable at scale — provisioning environments as code with Terraform, orchestrating workloads on Kubernetes, and directing Claude Code as a plan-reviewed agent on live infrastructure changes. Resilience and repeatability aren't an afterthought; they're the platform.
+          Platform Engineer with 5+ years of experience designing and operating cloud-native infrastructure that stays reliable at scale — provisioning environments as code with Terraform, orchestrating workloads on Kubernetes, and directing Claude Code as a plan-reviewed agent on live infrastructure changes. I've built that discipline into tooling too: an AI PR reviewer running across ~80 repositories that catches real infrastructure issues before they merge. Resilience and repeatability aren't an afterthought; they're the platform.
         </p>
         <div class="cta-row">
           <a class="btn btn-primary" href="mailto:kwesianane09@gmail.com">Email me →</a>
@@ -620,7 +620,7 @@
           <div class="stat-divider"></div>
           <div class="stat"><span class="stat-num">CKAD</span><span class="stat-label">certified</span></div>
           <div class="stat-divider"></div>
-          <div class="stat"><span class="stat-num">40+</span><span class="stat-label">services in production</span></div>
+          <div class="stat"><span class="stat-num">50+</span><span class="stat-label">services in production</span></div>
         </div>
       </div>
 
@@ -675,9 +675,9 @@
             <dt>Situation</dt>
             <dd>Every infrastructure change — Terraform, Helm, CI config — starts as a branch, never a direct edit to main.</dd>
             <dt>Action</dt>
-            <dd>Claude Code drafts the diff when I'm directing it as an agent; I review every line before it merges, same bar whether the agent wrote it or I did.</dd>
+            <dd>Claude Code drafts the diff when I'm directing it as an agent; an AI PR reviewer I built takes the first pass — GitHub MCP, ~80 repos, ~30 infra PRs a week — then I review every line before it merges, same bar whether the agent wrote it or I did.</dd>
             <dt>Result</dt>
-            <dd>A clean audit trail — every change traceable to a PR, a review, and a reason.</dd>
+            <dd>A clean audit trail — every change traceable to a PR, a review, and a reason. The reviewer catches ~3 real issues a week (IAM widening, drift, unsafe Helm changes) before they merge.</dd>
           </dl>
         </div>
       </details>
@@ -743,7 +743,7 @@
             <dt>Action</dt>
             <dd>Replaced them with OIDC federation. GitHub Actions now assumes a scoped IAM role via the cluster's OIDC provider on each run instead of storing a secret.</dd>
             <dt>Result</dt>
-            <dd>No long-lived AWS credentials left in CI/CD, across 3 accounts (dev, staging, production).</dd>
+            <dd>No long-lived AWS credentials left in CI/CD, across the whole multi-tenant platform.</dd>
           </dl>
         </div>
       </details>
@@ -765,7 +765,7 @@
             <dt>Action</dt>
             <dd>Led a ~2-week migration to Gateway API + ALB, giving each team its own routing rules. Planned it stage by stage with Claude Code, diff reviewed before anything applied, coordinated with a 6-person team.</dd>
             <dt>Result</dt>
-            <dd>Routing issues now stay scoped to the team that caused them. 3-cluster EKS platform, ~40+ services, all on Terraform and Helm.</dd>
+            <dd>Routing issues now stay scoped to the team that caused them. 6-cluster multi-tenant EKS platform, 50+ microservices, ~15 engineering teams, all on Terraform and Helm.</dd>
           </dl>
         </div>
       </details>
@@ -787,7 +787,7 @@
             <dt>Action</dt>
             <dd>A Datadog alert paged me directly. Reviewed the ALB's listener and routing rules and found requests being routed incorrectly.</dd>
             <dt>Result</dt>
-            <dd>Fixed in about 15 minutes, alert to resolution. The dashboards and alerts themselves are self-built — I configure the thresholds and page routing.</dd>
+            <dd>Fixed in about 15 minutes, alert to resolution. The dashboards and alerts themselves are self-built — I configure the thresholds and page routing. Since then I've also built an AI incident-diagnostic workflow that correlates pod state, deployment history, and Terraform changes to point at the likely root cause — a human still drives the fix.</dd>
           </dl>
         </div>
       </details>
@@ -807,7 +807,7 @@
       <div class="skill-card reveal">
         <div class="skill-comment"># agentic-ai</div>
         <div class="skill-head"><span class="skill-icon">🤖</span><h3>Agentic AI</h3></div>
-        <p>Claude Code as a plan-reviewed agent on live Terraform/Helm changes — including a self-built Terraform PR-review skill</p>
+        <p>Claude Code as a plan-reviewed agent on live Terraform/Helm changes — plus an AI PR reviewer (GitHub MCP, 4 specialized skills) and an incident-diagnostic workflow, both self-built</p>
       </div>
 
       <div class="skill-card reveal">
@@ -889,13 +889,19 @@
       <div class="project-card reveal">
         <div class="project-cmd"><span class="prompt">$</span>terraform apply -var-file=aws-infra.tfvars</div>
         <h3>EKS Platform on Terraform</h3>
-        <p>Engineered a 3-cluster EKS platform (dev/staging/production, ~40+ services) at vAuto, including reusable Terraform modules for VPC, IAM, and S3 since adopted by another team.</p>
+        <p>Standardized a multi-tenant AWS platform across 6 EKS clusters and 50+ microservices at vAuto using reusable Terraform modules, serving about 15 engineering teams on a consistent provisioning model.</p>
       </div>
 
       <div class="project-card reveal">
-        <div class="project-cmd"><span class="prompt">$</span>claude-code run terraform-pr-review</div>
-        <h3>Terraform PR Review Skill</h3>
-        <p>Built a self-directed, reusable Claude Code skill that reviews Terraform PRs for missing IAM permissions, duplicate resources, and infrastructure inconsistencies — catches a real issue in about 1 of every 4 runs.</p>
+        <div class="project-cmd"><span class="prompt">$</span>claude-code run ai-pr-review</div>
+        <h3>AI PR Reviewer</h3>
+        <p>Built an AI PR reviewer with Claude Code and GitHub MCP across ~80 repositories — ~30 infra PRs a week, catching ~3 real issues weekly (IAM widening, drift, unsafe Helm changes) before merge. Backed by four specialized Claude Code skills: Terraform plan review, Kubernetes manifest linting, RBAC audit, and Gateway API/Helm validation. Cut review turnaround from ~1 day to same-day and saves ~5 hours a week.</p>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-cmd"><span class="prompt">$</span>claude-code run incident-diagnostics</div>
+        <h3>AI Incident-Diagnostic Workflow</h3>
+        <p>Built an AI workflow that correlates Kubernetes pod state, GitHub/deployment history, and Terraform changes to point at the most likely production root cause — a human still drives the diagnosis and fix from there.</p>
       </div>
 
       <div class="project-card reveal">
@@ -915,7 +921,7 @@
       <h2>Get in touch</h2>
     </div>
     <div class="contact-panel reveal">
-      <p class="lead">Open to DevOps and Cloud Engineering roles — let's connect and build something reliable together.</p>
+      <p class="lead">Open to Platform and DevOps Engineering roles — let's connect and build something reliable together.</p>
       <div class="contact-links">
         <a class="btn btn-primary" href="mailto:kwesianane09@gmail.com">kwesianane09@gmail.com</a>
         <a class="btn btn-ghost" href="https://www.linkedin.com/in/moses-sarpong-77b3053a8" target="_blank" rel="noopener">LinkedIn ↗</a>
