@@ -5,15 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
   (function(){
+    var root = document.documentElement;
+    root.classList.add('js');
     try{
       var t = localStorage.getItem('theme');
-      if(t) document.documentElement.setAttribute('data-theme', t);
+      if(t) root.setAttribute('data-theme', t);
     }catch(e){}
   })();
 </script>
 <title>Moses Sarpong — Platform Engineer</title>
 <meta name="description" content="Moses Sarpong — Platform Engineer specializing in Kubernetes, Terraform, AWS, and agentic AI infrastructure automation with Claude Code.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230B1220'/%3E%3Ctext x='50' y='67' font-family='monospace' font-size='54' fill='%23F2B705' text-anchor='middle'%3E%3E_%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#0B1220">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mosarp.com">
 <meta property="og:title" content="Moses Sarpong — Platform Engineer">
@@ -37,9 +40,11 @@
     --text-faint: #57657F;
     --amber: #F2B705;
     --teal: #4FD1C5;
+    --on-accent: #16130a;
     --font-display: 'Space Grotesk', sans-serif;
     --font-body: 'Inter', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
+    --header-h: 64px;
   }
 
   :root[data-theme="terminal"]{
@@ -54,6 +59,7 @@
     --text-faint: #4A6E58;
     --amber: #3DDC84;
     --teal: #22C55E;
+    --on-accent: #03130a;
   }
 
   :root[data-theme="ember"]{
@@ -68,6 +74,7 @@
     --text-faint: #8C6656;
     --amber: #FF6B4A;
     --teal: #FFB627;
+    --on-accent: #1d0a05;
   }
 
   :root[data-theme="arctic"]{
@@ -82,11 +89,16 @@
     --text-faint: #547892;
     --amber: #5AC8FA;
     --teal: #7DD3FC;
+    --on-accent: #06192a;
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
 
-  html{ scroll-behavior:smooth; }
+  html{
+    scroll-behavior:smooth;
+    /* Anchor targets land below the sticky bar instead of underneath it */
+    scroll-padding-top: calc(var(--header-h) + 20px);
+  }
 
   body{
     background:
@@ -97,21 +109,47 @@
     font-family: var(--font-body);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 
   a{ color: inherit; text-decoration:none; }
+  button{ font: inherit; color: inherit; }
+  ul{ list-style:none; }
 
   .wrap{
-    max-width: 980px;
+    max-width: 1120px;
     margin: 0 auto;
     padding: 0 28px;
   }
 
-  ::selection{ background: var(--amber); color: #0B1220; }
+  ::selection{ background: var(--amber); color: var(--on-accent); }
 
   :focus-visible{
     outline: 2px solid var(--teal);
     outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  .icon{
+    width: 1em; height: 1em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+
+  /* ---------- SCROLL PROGRESS ---------- */
+  .progress{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    z-index: 60;
+    background: linear-gradient(90deg, var(--amber), var(--teal));
+    transform: scaleX(var(--p, 0));
+    transform-origin: left;
+    pointer-events: none;
   }
 
   /* ---------- NAV ---------- */
@@ -119,15 +157,17 @@
     position: sticky;
     top: 0;
     z-index: 50;
-    backdrop-filter: blur(10px);
-    background: rgba(11,18,32,0.82);
+    background: var(--bg);
+    background: color-mix(in srgb, var(--bg) 80%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
     border-bottom: 1px solid var(--border-soft);
   }
   nav{
     display:flex;
     align-items:center;
-    justify-content:space-between;
-    padding: 18px 0;
+    gap: 24px;
+    height: var(--header-h);
   }
   .logo{
     font-family: var(--font-mono);
@@ -136,34 +176,189 @@
     color: var(--text);
     display:flex;
     align-items:center;
-    gap:8px;
+    gap: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .logo .dim{ color: var(--text-faint); }
+  .nav-menu{
+    flex: 1;
+    display:flex;
+    align-items:center;
+    gap: 24px;
+    min-width: 0;
+  }
   .nav-links{
     display:flex;
     align-items:center;
-    gap: 20px;
+    gap: 4px;
+    margin: 0 auto;
     font-family: var(--font-mono);
     font-size: 13px;
   }
   .nav-links a{
+    position: relative;
     color: var(--text-muted);
-    transition: color .15s ease;
+    padding: 8px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: color .15s ease, background .15s ease;
   }
-  .nav-links a:hover{ color: var(--teal); }
-  .status-pill{
+  .nav-links a:hover{ color: var(--text); background: var(--surface); }
+  .nav-links a.active{ color: var(--teal); }
+  .nav-links a.active::after{
+    content:"";
+    position:absolute;
+    left: 12px; right: 12px; bottom: 2px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--teal);
+  }
+
+  .theme-picker{
     display:flex;
     align-items:center;
-    gap:7px;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-faint);
+    flex-shrink: 0;
+  }
+  .theme-label{ display:none; }
+  .theme-swatches{
+    display:flex;
+    gap: 7px;
+    padding: 5px 8px;
+    border: 1px solid var(--border-soft);
+    border-radius: 100px;
+    background: var(--surface);
+  }
+  .theme-swatch{
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    padding: 0;
+    transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+  .theme-swatch:hover{ transform: scale(1.18); }
+  .theme-swatch[aria-pressed="true"]{
+    border-color: var(--text);
+    box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--teal);
+  }
+
+  .socials{ display:flex; gap: 4px; flex-shrink: 0; }
+  .socials a{
+    color: var(--text-muted);
+    display:flex;
+    padding: 8px;
+    border-radius: 6px;
+    transition: color .15s ease, background .15s ease;
+  }
+  .socials a:hover{ color: var(--amber); background: var(--surface); }
+  .socials svg{ width:18px; height:18px; }
+
+  .nav-toggle{
+    display:none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .nav-toggle span{
+    display:block;
+    width: 18px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--text);
+    margin: 3px 0;
+    transition: transform .2s ease, opacity .2s ease;
+  }
+  nav.open .nav-toggle span:nth-child(1){ transform: translateY(5px) rotate(45deg); }
+  nav.open .nav-toggle span:nth-child(2){ opacity: 0; }
+  nav.open .nav-toggle span:nth-child(3){ transform: translateY(-5px) rotate(-45deg); }
+
+  /* The full row (logo + 6 links + theme dots + socials) needs ~1000px;
+     switch to the menu with room to spare so nothing collides. */
+  @media (max-width: 1080px){
+    nav{ gap: 8px; }
+    .logo{ margin-right: auto; }
+    .nav-toggle{ display:block; margin-left: 6px; }
+    .nav-menu{
+      display:none;
+      position:absolute;
+      top: 100%;
+      left: 0; right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: 8px 28px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 24px 40px -20px rgba(0,0,0,.6);
+      max-height: calc(100vh - var(--header-h));
+      max-height: calc(100dvh - var(--header-h));
+      overflow-y: auto;
+    }
+    nav.open .nav-menu{ display:flex; }
+    .nav-links{
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      margin: 0;
+      font-size: 14px;
+    }
+    .nav-links a{
+      padding: 14px 0;
+      border-radius: 0;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .nav-links a:hover{ background: none; }
+    .nav-links a.active::after{ display:none; }
+    .nav-links a::before{ content:"./"; color: var(--text-faint); }
+    .theme-picker{ padding-top: 16px; }
+    .theme-label{ display:inline; }
+    .theme-swatches{ gap: 10px; padding: 7px 10px; background: var(--bg); }
+    .theme-swatch{ width: 22px; height: 22px; }
+  }
+
+  /* ---------- HERO ---------- */
+  section{ padding: 88px 0; border-top: 1px solid var(--border-soft); }
+  .hero{
+    position: relative;
+    isolation: isolate;
+    padding: 84px 0 72px;
+    border-top: 0;
+  }
+  /* Two soft lights behind the hero, tinted by whichever theme is active */
+  .hero::before{
+    content:"";
+    position:absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(640px 440px at 86% 30%, color-mix(in srgb, var(--teal) 13%, transparent), transparent 70%),
+      radial-gradient(560px 380px at 4% 0%, color-mix(in srgb, var(--amber) 9%, transparent), transparent 70%);
+  }
+  .status-pill{
+    display:inline-flex;
+    align-items:center;
+    gap: 8px;
     font-family: var(--font-mono);
     font-size: 12px;
     color: var(--text-muted);
     border: 1px solid var(--border);
-    padding: 5px 10px;
+    background: color-mix(in srgb, var(--surface) 70%, transparent);
+    padding: 6px 12px;
     border-radius: 100px;
+    margin-bottom: 22px;
   }
   .status-dot{
-    width:6px; height:6px; border-radius:50%;
+    width:7px; height:7px; border-radius:50%;
     background: var(--teal);
     box-shadow: 0 0 8px var(--teal);
     animation: pulse 2s ease-in-out infinite;
@@ -172,208 +367,95 @@
     0%,100%{ opacity:1; }
     50%{ opacity:.4; }
   }
-  .socials{ display:flex; gap:16px; }
-  .socials a{ color: var(--text-muted); display:flex; transition: color .15s ease; }
-  .socials a:hover{ color: var(--amber); }
-  .socials svg{ width:18px; height:18px; }
-
-  .nav-toggle{
-    display:none;
-    background:none;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 7px 9px;
-    cursor: pointer;
-  }
-  .nav-toggle span{
-    display:block;
-    width: 18px;
-    height: 2px;
-    background: var(--text);
-    margin: 3px 0;
-    transition: transform .2s ease, opacity .2s ease;
-  }
-
-  @media (max-width: 720px){
-    nav{ flex-wrap: wrap; }
-    .nav-toggle{ display:block; order: 3; }
-    .status-pill{ display:none; }
-    .nav-links{
-      display:none;
-      width: 100%;
-      order: 4;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 4px;
-      padding-top: 14px;
-      margin-top: 14px;
-      border-top: 1px solid var(--border-soft);
-    }
-    .nav-links a{ padding: 8px 0; width:100%; }
-    nav.open .nav-links{ display:flex; }
-  }
-
-  /* ---------- HERO ---------- */
-  .hero{ padding: 88px 0 64px; }
   h1{
     font-family: var(--font-display);
-    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    font-size: clamp(2.7rem, 6.6vw, 4.9rem);
     font-weight: 700;
-    letter-spacing: -0.02em;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
     color: var(--text);
   }
   .role{
     font-family: var(--font-display);
-    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    font-size: clamp(1.15rem, 2.3vw, 1.6rem);
     color: var(--text-muted);
     font-weight: 500;
-    margin-top: 8px;
+    margin-top: 14px;
   }
   .role span{ color: var(--teal); }
 
   .hero-grid{
     display:grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: 48px;
-    margin-top: 44px;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 56px;
+    margin-top: 40px;
     align-items:start;
-  }
-  @media (max-width: 860px){
-    .hero-grid{ grid-template-columns: 1fr; }
   }
 
   .bio{
     color: var(--text-muted);
-    font-size: 1.02rem;
-    max-width: 46ch;
+    font-size: 1.06rem;
+    line-height: 1.7;
+    max-width: 52ch;
   }
+  .hl{ color: var(--teal); font-weight: 600; }
+
   .cta-row{
     display:flex;
-    gap: 14px;
+    gap: 12px;
     margin-top: 32px;
     flex-wrap: wrap;
   }
   .btn{
     font-family: var(--font-mono);
     font-size: 13px;
-    padding: 11px 20px;
-    border-radius: 6px;
+    padding: 11px 18px;
+    border-radius: 8px;
     display:inline-flex;
     align-items:center;
     gap:8px;
-    transition: all .15s ease;
+    white-space: nowrap;
+    transition: transform .15s ease, border-color .15s ease, color .15s ease, background .15s ease, filter .15s ease, box-shadow .15s ease;
     border: 1px solid transparent;
   }
+  .btn .icon, .btn svg{ width: 15px; height: 15px; }
   .btn-primary{
     background: var(--amber);
-    color: #16130a;
+    color: var(--on-accent);
     font-weight: 600;
+    box-shadow: 0 10px 24px -12px var(--amber);
   }
-  .btn-primary:hover{ background: #ffcc2e; transform: translateY(-1px); }
+  .btn-primary:hover{ filter: brightness(1.1); transform: translateY(-2px); }
   .btn-ghost{
     border-color: var(--border);
+    background: color-mix(in srgb, var(--surface) 60%, transparent);
     color: var(--text);
   }
-  .btn-ghost:hover{ border-color: var(--teal); color: var(--teal); }
+  .btn-ghost:hover{ border-color: var(--teal); color: var(--teal); transform: translateY(-2px); }
 
-  .stats-row{
-    display:flex;
-    align-items:center;
-    gap: 22px;
-    margin-top: 36px;
-    flex-wrap: wrap;
-  }
-  .stat{ display:flex; flex-direction:column; gap:2px; }
-  .stat-num{
-    font-family: var(--font-display);
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--teal);
-  }
-  .stat-label{
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--text-faint);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .stat-divider{
-    width: 1px;
-    height: 30px;
-    background: var(--border);
-  }
-
-  .hl{ color: var(--teal); font-weight: 600; }
-
-  /* ---------- MANIFESTO DIVIDER ---------- */
-  .manifesto{
-    border-top: 1px solid var(--border-soft);
-    padding: 34px 0;
-    text-align: center;
-  }
-  .manifesto p{
-    font-family: var(--font-mono);
-    font-size: 0.95rem;
-    color: var(--text-muted);
-    max-width: 64ch;
-    margin: 0 auto;
-  }
-  .manifesto-mark{ color: var(--amber); margin-right: 8px; }
-
-  /* ---------- THEME PICKER ---------- */
-  .theme-picker{
-    display:flex;
-    align-items:center;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin: 4px 0 28px;
-    padding: 10px 14px;
-    background: var(--surface);
-    border: 1px solid var(--border-soft);
-    border-radius: 8px;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--text-muted);
-    width: fit-content;
-  }
-  .theme-picker .prompt{ color: var(--text-faint); margin-right: 2px; }
-  .theme-swatches{ display:flex; gap:9px; }
-  .theme-swatch{
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    cursor: pointer;
-    padding: 0;
-    background: transparent;
-    transition: transform .15s ease, border-color .15s ease;
-  }
-  .theme-swatch:hover{ transform: translateY(-2px); }
-  .theme-swatch:focus-visible{ outline-offset: 3px; }
-  .theme-swatch[aria-pressed="true"]{
-    border-color: var(--text);
-    box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--teal);
-  }
-
-  /* Manifest card - signature element */
+  /* Terminal card — the signature element */
   .manifest{
+    position: relative;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 20px 50px -20px rgba(0,0,0,0.5);
+    border-radius: 12px;
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--teal) 8%, transparent),
+      0 30px 60px -28px rgba(0,0,0,0.7),
+      0 0 80px -30px color-mix(in srgb, var(--teal) 45%, transparent);
   }
   .manifest-bar{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding: 10px 16px;
+    padding: 11px 16px;
     border-bottom: 1px solid var(--border);
     background: var(--border-soft);
+    border-radius: 12px 12px 0 0;
   }
   .manifest-dots{ display:flex; gap:6px; }
   .manifest-dots span{
-    width:9px; height:9px; border-radius:50%;
+    width:10px; height:10px; border-radius:50%;
     background: var(--border);
   }
   .manifest-title{
@@ -382,15 +464,29 @@
     color: var(--text-faint);
   }
   .manifest-body{
-    padding: 22px 24px 26px;
+    padding: 20px 22px 24px;
     font-family: var(--font-mono);
     font-size: 13.5px;
-    line-height: 1.85;
+    line-height: 1.8;
     overflow-x: auto;
+  }
+  .manifest-body .cmd{
+    color: var(--text);
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px dashed var(--border);
+    white-space: nowrap;
+  }
+  .manifest-body .prompt{ color: var(--amber); margin-right: 8px; }
+  .typed{
+    display:inline-block;
+    overflow:hidden;
+    white-space: nowrap;
+    vertical-align: bottom;
+    width: 28ch;
   }
   .manifest-body .key{ color: var(--text-muted); }
   .manifest-body .string{ color: var(--teal); }
-  .manifest-body .num{ color: var(--amber); }
   .manifest-body .indent1{ padding-left: 20px; }
   .manifest-body .indent2{ padding-left: 40px; }
   .cursor{
@@ -403,13 +499,88 @@
   }
   @keyframes blink{ 50%{ opacity:0; } }
 
+  /* The command types itself, then the YAML prints line by line. Only armed
+     when JS is running, so the card is never left blank without it. */
+  .js .manifest:not(.in) .typed{ width: 0; }
+  .js .manifest:not(.in) .yl{ opacity: 0; }
+  .js .manifest.in .typed{ animation: typing .9s steps(28) .25s both; }
+  .js .manifest.in .yl{ animation: line-in .28s ease both; animation-delay: calc(1.25s + var(--i, 0) * 45ms); }
+  @keyframes typing{ from{ width: 0; } to{ width: 28ch; } }
+  @keyframes line-in{ from{ opacity:0; transform: translateX(-6px); } to{ opacity:1; transform:none; } }
+
+  /* KPI grid — 2x2 beside the terminal card, 4-up when the hero stacks */
+  .kpis{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin-top: 36px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--surface) 72%, transparent);
+    overflow: hidden;
+  }
+  .kpi{
+    padding: 18px 22px;
+    border-left: 1px solid var(--border-soft);
+  }
+  .kpi:nth-child(odd){ border-left: 0; }
+  .kpi:nth-child(n+3){ border-top: 1px solid var(--border-soft); }
+  .kpi-num{
+    display:block;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--teal);
+  }
+  .kpi-label{
+    display:block;
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  @media (max-width: 900px){
+    .hero{ padding: 56px 0 56px; }
+    .hero-grid{ grid-template-columns: 1fr; gap: 40px; }
+    .bio{ max-width: 62ch; }
+  }
+  @media (min-width: 641px) and (max-width: 900px){
+    .kpis{ grid-template-columns: repeat(4, 1fr); }
+    .kpi:nth-child(odd){ border-left: 1px solid var(--border-soft); }
+    .kpi:first-child{ border-left: 0; }
+    .kpi:nth-child(n+3){ border-top: 0; }
+  }
+
+  /* ---------- MANIFESTO ---------- */
+  .manifesto{
+    border-top: 1px solid var(--border-soft);
+    padding: 64px 0;
+    text-align: center;
+  }
+  .manifesto p{
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    max-width: 30em;
+    margin: 0 auto;
+    text-wrap: balance;
+  }
+  .manifesto p span{ color: var(--text-muted); }
+  .manifesto .manifesto-mark{ color: var(--amber); margin-right: 10px; }
+
   /* ---------- SECTION HEADERS (kind: X) ---------- */
-  section{ padding: 76px 0; border-top: 1px solid var(--border-soft); }
   .section-head{
     display:flex;
     align-items:baseline;
-    gap: 14px;
-    margin-bottom: 40px;
+    gap: 16px;
+    margin-bottom: 36px;
     flex-wrap: wrap;
   }
   .section-head .kind{
@@ -420,126 +591,155 @@
   .section-head .kind b{ color: var(--amber); font-weight: 500; }
   .section-head h2{
     font-family: var(--font-display);
-    font-size: 1.7rem;
+    font-size: clamp(1.6rem, 3.2vw, 2.2rem);
     font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .section-head::after{
+    content:"";
+    flex: 1;
+    min-width: 40px;
+    height: 1px;
+    align-self: center;
+    background: linear-gradient(90deg, var(--border), transparent);
   }
 
   /* ---------- INFRASTRUCTURE ---------- */
   .infra-intro{
     color: var(--text-muted);
     max-width: 60ch;
-    margin-top: -22px;
+    margin-top: -18px;
     margin-bottom: 32px;
-    font-size: 0.95rem;
+    font-size: 0.98rem;
   }
-  .infra-diagram{
+  .pipeline{
     display:flex;
-    flex-wrap: wrap;
-    align-items:flex-start;
-    gap: 2px 0;
+    align-items: stretch;
   }
-  @media (max-width: 860px){
-    .infra-diagram{ flex-direction:column; gap:10px; }
-  }
-  .infra-arrow{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color: var(--text-faint);
-    font-family: var(--font-mono);
-    font-size: 15px;
-    flex-shrink:0;
-    width: 22px;
-    padding-top: 34px;
-  }
-  @media (max-width: 860px){
-    .infra-arrow{ width:auto; height:auto; padding:0; transform: rotate(90deg); }
-  }
-  .infra-node{
+  .stage{
+    position: relative;
     flex: 1 1 0;
     min-width: 0;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    transition: border-color .18s ease, background .18s ease;
-  }
-  .infra-node[open]{
-    border-color: var(--teal);
-    background: var(--surface-hover);
-    flex: 1 1 100%;
-    order: 99;
-  }
-  .infra-node summary{
-    list-style:none;
-    cursor:pointer;
-    padding: 16px 12px;
     display:flex;
     flex-direction:column;
     align-items:center;
     text-align:center;
-    gap: 9px;
+    gap: 10px;
+    padding: 18px 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease;
   }
-  .infra-node summary::-webkit-details-marker{ display:none; }
-  .infra-icon{ font-size: 1.25rem; }
-  .infra-name{
-    font-family: var(--font-display);
-    font-size: 0.88rem;
-    font-weight: 600;
+  .stage:hover{ border-color: var(--text-faint); background: var(--surface-hover); transform: translateY(-2px); }
+  .stage[aria-selected="true"]{
+    border-color: var(--teal);
+    background: var(--surface-hover);
+    box-shadow: 0 0 0 1px var(--teal), 0 18px 40px -22px var(--teal);
   }
-  .infra-status{
+  .stage-idx{
+    position:absolute;
+    top: 8px; left: 10px;
     font-family: var(--font-mono);
     font-size: 10px;
-    letter-spacing: 0.04em;
+    color: var(--text-faint);
+  }
+  .stage-icon{
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 20px;
+    color: var(--text-muted);
+    background: var(--bg);
+    border: 1px solid var(--border-soft);
+    transition: color .18s ease, border-color .18s ease;
+  }
+  .stage[aria-selected="true"] .stage-icon{ color: var(--teal); border-color: color-mix(in srgb, var(--teal) 50%, var(--border)); }
+  .stage-name{
+    font-family: var(--font-display);
+    font-size: 0.92rem;
+    font-weight: 600;
+  }
+  .stage-status{
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
     color: var(--teal);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    padding: 3px 9px 3px 7px;
     display:inline-flex;
     align-items:center;
     gap:5px;
     white-space: nowrap;
   }
-  .infra-status::before{
+  .stage-status::before{
     content:"";
     width:5px; height:5px; border-radius:50%;
     background: var(--teal);
     box-shadow: 0 0 6px var(--teal);
   }
-  .infra-chevron{
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    color: var(--text-faint);
+  /* Connector between stages: a dashed line that keeps flowing left to right */
+  .pipe{
+    flex: 0 0 22px;
+    align-self: center;
+    height: 2px;
+    opacity: .6;
+    background: repeating-linear-gradient(90deg, var(--teal) 0 5px, transparent 5px 10px);
+    background-size: 10px 2px;
+    animation: flow .7s linear infinite;
   }
-  .infra-node:not([open]) .infra-chevron::before{ content:"▸ expand"; }
-  .infra-node[open] .infra-chevron::before{ content:"▾ collapse"; }
+  @keyframes flow{ to{ background-position-x: 10px; } }
 
-  .infra-session{
-    border-top: 1px solid var(--border);
-    padding: 20px 22px 24px;
+  .stage-panel{
+    margin-top: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
   }
-  .infra-session-bar{
+  .js .stage-panel{ animation: panel-in .3s ease; }
+  @keyframes panel-in{ from{ opacity:0; transform: translateY(8px); } to{ opacity:1; transform:none; } }
+  .panel-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 16px;
+    padding: 12px 22px;
+    border-bottom: 1px solid var(--border);
+    background: var(--border-soft);
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 12.5px;
     color: var(--amber);
-    margin-bottom: 16px;
   }
-  .infra-session-bar .prompt{ color: var(--text-faint); margin-right: 6px; }
-  .infra-session dt{
+  .panel-bar .prompt{ color: var(--text-faint); margin-right: 8px; }
+  .panel-bar .panel-step{ color: var(--text-faint); white-space: nowrap; }
+  .panel-body{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .panel-body > div{
+    padding: 22px 22px 26px;
+    border-left: 1px solid var(--border-soft);
+  }
+  .panel-body > div:first-child{ border-left: 0; }
+  .panel-body dt{
     font-family: var(--font-mono);
     font-size: 10.5px;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     color: var(--text-faint);
-    margin-top: 14px;
+    margin-bottom: 8px;
   }
-  .infra-session dt:first-child{ margin-top:0; }
-  .infra-session dd{
+  .panel-body .result dt{ color: var(--teal); }
+  .panel-body dd{
     color: var(--text-muted);
     font-size: 0.93rem;
-    margin-top: 5px;
-    max-width: 68ch;
+    line-height: 1.65;
   }
-  .infra-session code{
+  .panel-body .result dd{ color: var(--text); }
+  .panel-body code{
     font-family: var(--font-mono);
     font-size: 0.88em;
     color: var(--teal);
@@ -548,208 +748,401 @@
     border-radius: 4px;
   }
 
+  @media (max-width: 860px){
+    .pipeline{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .pipe{ display:none; }
+    .stage{ padding: 16px 6px 12px; gap: 8px; }
+    .stage:hover{ transform: none; }
+    .stage-status{ font-size: 0; gap: 0; }
+    .panel-body{ grid-template-columns: 1fr; }
+    .panel-body > div{ border-left: 0; border-top: 1px solid var(--border-soft); padding: 18px 20px 20px; }
+    .panel-body > div:first-child{ border-top: 0; }
+    .panel-bar{ padding: 12px 20px; }
+  }
+
+  /* ---------- CARDS (shared) ---------- */
+  .card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: border-color .18s ease, transform .18s ease, background .18s ease, box-shadow .18s ease;
+  }
+  .card:hover{
+    border-color: var(--teal);
+    background: var(--surface-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px -28px var(--teal);
+  }
+  .chips{ display:flex; flex-wrap: wrap; gap: 8px; }
+  .chip{
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--text-muted);
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    background: var(--bg);
+  }
+  .chip b{ color: var(--teal); font-weight: 600; }
+
   /* ---------- SKILLS ---------- */
   .skills-grid{
     display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
   }
-  .skill-card{
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px 20px 22px;
-    transition: border-color .18s ease, transform .18s ease, background .18s ease;
-  }
-  .skill-card:hover{
-    border-color: var(--teal);
-    background: var(--surface-hover);
-    transform: translateY(-2px);
+  .skill-card{ padding: 22px 22px 24px; }
+  .skill-card.featured{
+    grid-column: span 2;
+    border-color: color-mix(in srgb, var(--amber) 45%, var(--border));
+    background:
+      radial-gradient(420px 200px at 100% 0%, color-mix(in srgb, var(--amber) 10%, transparent), transparent 70%),
+      var(--surface);
   }
   .skill-comment{
     font-family: var(--font-mono);
     font-size: 12px;
     color: var(--text-faint);
-    margin-bottom: 10px;
+    margin-bottom: 14px;
   }
   .skill-head{
     display:flex;
     align-items:center;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 12px;
+    margin-bottom: 12px;
   }
-  .skill-icon{ font-size: 1.2rem; }
+  .skill-icon{
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 19px;
+    color: var(--teal);
+    background: color-mix(in srgb, var(--teal) 10%, var(--bg));
+    border: 1px solid color-mix(in srgb, var(--teal) 28%, var(--border));
+  }
+  .skill-card.featured .skill-icon{
+    color: var(--amber);
+    background: color-mix(in srgb, var(--amber) 10%, var(--bg));
+    border-color: color-mix(in srgb, var(--amber) 32%, var(--border));
+  }
   .skill-head h3{
     font-family: var(--font-display);
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     font-weight: 600;
   }
   .skill-card p{
     color: var(--text-muted);
-    font-size: 0.92rem;
+    font-size: 0.94rem;
+  }
+  @media (max-width: 900px){
+    .skills-grid{ grid-template-columns: repeat(2, 1fr); }
+    .skill-card.featured{ grid-column: auto; }
+  }
+  @media (max-width: 560px){
+    .skills-grid{ grid-template-columns: 1fr; }
   }
 
   /* ---------- CERTIFICATIONS ---------- */
   .cert-card{
-    display:flex;
+    display:grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
     align-items:center;
-    gap: 22px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 22px 26px;
-    max-width: 480px;
-    transition: border-color .18s ease, background .18s ease;
+    gap: 36px;
+    padding: 28px 30px;
   }
-  .cert-card:hover{
-    border-color: var(--amber);
-    background: var(--surface-hover);
-  }
+  .cert-main{ display:flex; align-items:center; gap: 22px; }
   .cert-badge{
     flex-shrink: 0;
     font-family: var(--font-mono);
     font-weight: 600;
-    font-size: 14px;
-    color: #16130a;
+    font-size: 16px;
+    color: var(--on-accent);
     background: var(--amber);
-    border-radius: 8px;
-    padding: 12px 16px;
-    letter-spacing: 0.02em;
+    border-radius: 10px;
+    padding: 16px 18px;
+    letter-spacing: 0.04em;
+    box-shadow: 0 12px 28px -14px var(--amber);
   }
   .cert-info h3{
     font-family: var(--font-display);
-    font-size: 1.02rem;
+    font-size: 1.15rem;
     font-weight: 600;
-    margin-bottom: 4px;
+    line-height: 1.3;
+    margin-bottom: 6px;
   }
   .cert-info p{
     font-family: var(--font-mono);
     font-size: 12.5px;
     color: var(--text-muted);
   }
+  .cert-domains{
+    padding-left: 36px;
+    border-left: 1px solid var(--border-soft);
+  }
+  .cert-domains-label{
+    display:block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-faint);
+    margin-bottom: 12px;
+  }
+  @media (max-width: 860px){
+    .cert-card{ grid-template-columns: 1fr; gap: 24px; padding: 24px; }
+    .cert-domains{ padding-left: 0; padding-top: 22px; border-left: 0; border-top: 1px solid var(--border-soft); }
+  }
 
   /* ---------- PROJECTS ---------- */
   .projects-list{
-    display:flex;
-    flex-direction:column;
-    gap: 14px;
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
   .project-card{
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 22px 24px;
-    transition: border-color .18s ease, background .18s ease;
+    display:flex;
+    flex-direction: column;
+    padding: 24px 26px 26px;
   }
-  .project-card:hover{
-    border-color: var(--amber);
-    background: var(--surface-hover);
-  }
+  .project-card:hover{ border-color: var(--amber); box-shadow: 0 20px 40px -28px var(--amber); }
   .project-cmd{
     font-family: var(--font-mono);
     font-size: 12.5px;
     color: var(--teal);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     word-break: break-word;
   }
   .project-cmd .prompt{ color: var(--text-faint); margin-right: 6px; }
   .project-card h3{
     font-family: var(--font-display);
-    font-size: 1.15rem;
+    font-size: 1.22rem;
     font-weight: 600;
-    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
   }
   .project-card p{
     color: var(--text-muted);
     font-size: 0.95rem;
-    max-width: 68ch;
+    line-height: 1.65;
+  }
+  .project-card .chips{ margin-top: auto; padding-top: 18px; }
+
+  .project-card.featured{
+    grid-column: 1 / -1;
+    display:grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 36px;
+    align-items:center;
+    padding: 30px 32px;
+    border-color: color-mix(in srgb, var(--amber) 45%, var(--border));
+    background:
+      radial-gradient(520px 260px at 100% 0%, color-mix(in srgb, var(--amber) 10%, transparent), transparent 70%),
+      var(--surface);
+  }
+  .project-card.featured h3{ font-size: 1.5rem; }
+  .featured-tag{
+    display:inline-block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--amber);
+    border: 1px solid color-mix(in srgb, var(--amber) 45%, var(--border));
+    border-radius: 100px;
+    padding: 3px 10px;
+    margin-bottom: 14px;
+  }
+  .metrics{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .metric{
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 14px 16px;
+    background: color-mix(in srgb, var(--bg) 70%, transparent);
+  }
+  .metric b{
+    display:block;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--amber);
+  }
+  .metric span{
+    display:block;
+    margin-top: 4px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    line-height: 1.45;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-faint);
+  }
+  @media (max-width: 860px){
+    .projects-list{ grid-template-columns: 1fr; }
+    .project-card.featured{ grid-template-columns: 1fr; gap: 24px; padding: 24px 26px 26px; }
   }
 
   /* ---------- CONTACT ---------- */
   .contact-panel{
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 40px;
+    border-radius: 16px;
+    padding: 56px 40px;
     text-align: center;
   }
+  .contact-panel::before{
+    content:"";
+    position:absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(480px 240px at 50% 0%, color-mix(in srgb, var(--amber) 12%, transparent), transparent 70%),
+      radial-gradient(480px 240px at 50% 100%, color-mix(in srgb, var(--teal) 10%, transparent), transparent 70%);
+  }
   .contact-panel p.lead{
-    color: var(--text-muted);
-    max-width: 50ch;
-    margin: 0 auto 28px;
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2.6vw, 1.7rem);
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    max-width: 26em;
+    margin: 0 auto 32px;
+    text-wrap: balance;
   }
   .contact-links{
     display:flex;
     justify-content:center;
-    gap: 14px;
+    gap: 12px;
     flex-wrap: wrap;
+  }
+  @media (max-width: 560px){
+    .contact-panel{ padding: 40px 22px; }
   }
 
   footer{
-    padding: 40px 0 60px;
-    text-align:center;
+    border-top: 1px solid var(--border-soft);
+    padding: 28px 0 44px;
     font-family: var(--font-mono);
     font-size: 12px;
     color: var(--text-faint);
   }
+  .footer-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .footer-row a{ transition: color .15s ease; }
+  .footer-row a:hover{ color: var(--teal); }
 
-  /* scroll reveal */
-  .reveal{
+  /* scroll reveal — only hides content once JS is confirmed running */
+  .js .reveal{
     opacity: 0;
     transform: translateY(14px);
     transition: opacity .6s ease, transform .6s ease;
   }
-  .reveal.in{
+  .js .reveal.in{
     opacity: 1;
     transform: translateY(0);
+  }
+  /* A revealed card goes back to the quick hover transition */
+  .js .card.reveal.in{ transition: border-color .18s ease, transform .18s ease, background .18s ease, box-shadow .18s ease, opacity .6s ease; }
+  .js .card.reveal.in:hover{ transform: translateY(-3px); }
+
+  @media (max-width: 700px){
+    section{ padding: 64px 0; }
+    .manifesto{ padding: 48px 0; }
+    .wrap{ padding: 0 20px; }
+    .nav-menu{ padding-left: 20px; padding-right: 20px; }
   }
 
   @media (prefers-reduced-motion: reduce){
     html{ scroll-behavior: auto; }
-    .status-dot, .cursor{ animation: none; }
-    .reveal{ opacity:1; transform:none; transition:none; }
+    .status-dot, .cursor, .pipe{ animation: none; }
+    .js .reveal{ opacity:1; transform:none; transition:none; }
+    .js .manifest .typed{ width: 28ch !important; animation: none !important; }
+    .js .manifest .yl{ opacity: 1 !important; animation: none !important; }
+    .js .stage-panel{ animation: none; }
+    .card:hover, .stage:hover, .btn:hover{ transform: none; }
   }
 </style>
 </head>
 <body>
 
+<!-- Icon sprite: one definition each, referenced with <use> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-branch" viewBox="0 0 24 24"><path d="M6 3v12"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol>
+  <symbol id="i-cicd" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.7-6L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.7 6L3 16"/><path d="M3 21v-5h5"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 4.5-9 4.5-9-4.5L12 3Z"/><path d="m3 12 9 4.5 9-4.5"/><path d="m3 16.5 9 4.5 9-4.5"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9Z"/></symbol>
+  <symbol id="i-wheel" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 9.5V3M14.17 10.75l5.62-3.25M14.17 13.25l5.62 3.25M12 14.5V21M9.83 13.25 4.21 16.5M9.83 10.75 4.21 7.5"/></symbol>
+  <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+  <symbol id="i-bot" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V5"/><circle cx="12" cy="3.5" r="1.5"/><path d="M9 13v2M15 13v2M2 14h2M20 14h2"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3"/><path d="M13 15h4"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M5 20h14"/></symbol>
+</svg>
+
+<div class="progress" aria-hidden="true"></div>
+
 <header>
   <div class="wrap">
     <nav>
-      <div class="logo">moses<span class="dim">@</span>infra<span class="dim">:~$</span></div>
-      <div class="nav-links">
-        <a href="#infrastructure">infra</a>
-        <a href="#skills">skills</a>
-        <a href="#certifications">certifications</a>
-        <a href="#projects">projects</a>
-        <a href="resume.pdf" target="_blank" rel="noopener">resume</a>
-        <a href="#contact">contact</a>
-      </div>
-      <div style="display:flex; align-items:center; gap:20px;">
-        <div class="status-pill"><span class="status-dot"></span>open to opportunities</div>
-        <div class="socials">
-          <a href="https://github.com/Oldsoldierms" target="_blank" rel="noopener" aria-label="GitHub">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.17c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.24 2.75.12 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.4-5.27 5.69.41.36.78 1.07.78 2.16v3.2c0 .31.21.66.79.55A10.52 10.52 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg>
-          </a>
-          <a href="https://www.linkedin.com/in/moses-sarpong-77b3053a8" target="_blank" rel="noopener" aria-label="LinkedIn">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.58c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.68H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.26 2.37 4.26 5.46v6.28ZM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45Z"/></svg>
-          </a>
-          <a href="mailto:kwesianane09@gmail.com" aria-label="Email">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-          </a>
+      <a class="logo" href="#top" aria-label="Moses Sarpong — back to top">moses<span class="dim">@</span>infra<span class="dim">:~$</span></a>
+      <div class="nav-menu" id="nav-menu">
+        <div class="nav-links">
+          <a href="#infrastructure">infra</a>
+          <a href="#skills">skills</a>
+          <a href="#certifications">certifications</a>
+          <a href="#projects">projects</a>
+          <a href="resume.pdf" target="_blank" rel="noopener">resume</a>
+          <a href="#contact">contact</a>
+        </div>
+        <div class="theme-picker">
+          <span class="theme-label">$ theme --set</span>
+          <div class="theme-swatches" role="group" aria-label="Color theme">
+            <button type="button" class="theme-swatch" data-theme="" aria-pressed="true" aria-label="Mission Control theme" title="Mission Control" style="background:linear-gradient(135deg, #0B1220 50%, #F2B705 50%)"></button>
+            <button type="button" class="theme-swatch" data-theme="terminal" aria-pressed="false" aria-label="Terminal theme" title="Terminal" style="background:linear-gradient(135deg, #050A08 50%, #3DDC84 50%)"></button>
+            <button type="button" class="theme-swatch" data-theme="ember" aria-pressed="false" aria-label="Ember theme" title="Ember" style="background:linear-gradient(135deg, #170D0A 50%, #FF6B4A 50%)"></button>
+            <button type="button" class="theme-swatch" data-theme="arctic" aria-pressed="false" aria-label="Arctic theme" title="Arctic" style="background:linear-gradient(135deg, #0A1420 50%, #5AC8FA 50%)"></button>
+          </div>
         </div>
       </div>
-      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <div class="socials">
+        <a href="https://github.com/Oldsoldierms" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.17c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.24 2.75.12 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.4-5.27 5.69.41.36.78 1.07.78 2.16v3.2c0 .31.21.66.79.55A10.52 10.52 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/moses-sarpong-77b3053a8" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.58c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.68H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.26 2.37 4.26 5.46v6.28ZM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45Z"/></svg>
+        </a>
+        <a href="mailto:kwesianane09@gmail.com" aria-label="Email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        </a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-menu">
         <span></span><span></span><span></span>
       </button>
     </nav>
   </div>
 </header>
 
-<section class="hero">
+<section class="hero" id="top">
   <div class="wrap">
+    <div class="status-pill"><span class="status-dot"></span>open to opportunities</div>
     <h1>Moses Sarpong</h1>
-    <p class="role">Platform & <span>DevOps Engineer</span></p>
+    <p class="role">Platform &amp; <span>DevOps Engineer</span></p>
 
     <div class="hero-grid">
       <div>
@@ -758,18 +1151,15 @@
         </p>
         <div class="cta-row">
           <a class="btn btn-primary" href="mailto:kwesianane09@gmail.com">Email me →</a>
-          <a class="btn btn-ghost" href="resume.pdf" target="_blank" rel="noopener">Download Resume</a>
-          <a class="btn btn-ghost" href="https://github.com/Oldsoldierms" target="_blank" rel="noopener">View GitHub</a>
-          <a class="btn btn-ghost" href="https://www.linkedin.com/in/moses-sarpong-77b3053a8" target="_blank" rel="noopener">Connect on LinkedIn</a>
+          <a class="btn btn-ghost" href="resume.pdf" target="_blank" rel="noopener"><svg class="icon"><use href="#i-download"/></svg>Download Resume</a>
+          <a class="btn btn-ghost" href="https://github.com/Oldsoldierms" target="_blank" rel="noopener">GitHub ↗</a>
+          <a class="btn btn-ghost" href="https://www.linkedin.com/in/moses-sarpong-77b3053a8" target="_blank" rel="noopener">LinkedIn ↗</a>
         </div>
-        <div class="stats-row">
-          <div class="stat"><span class="stat-num">5+</span><span class="stat-label">years experience</span></div>
-          <div class="stat-divider"></div>
-          <div class="stat"><span class="stat-num">CKAD</span><span class="stat-label">certified</span></div>
-          <div class="stat-divider"></div>
-          <div class="stat"><span class="stat-num">50+</span><span class="stat-label">services in production</span></div>
-          <div class="stat-divider"></div>
-          <div class="stat"><span class="stat-num">15 min</span><span class="stat-label">alert → resolution</span></div>
+        <div class="kpis">
+          <div class="kpi"><span class="kpi-num">5+</span><span class="kpi-label">years experience</span></div>
+          <div class="kpi"><span class="kpi-num">CKAD</span><span class="kpi-label">certified</span></div>
+          <div class="kpi"><span class="kpi-num">50+</span><span class="kpi-label">services in production</span></div>
+          <div class="kpi"><span class="kpi-num">15 min</span><span class="kpi-label">alert → resolution</span></div>
         </div>
       </div>
 
@@ -779,31 +1169,33 @@
           <div class="manifest-title">engineer.yaml</div>
         </div>
         <div class="manifest-body">
-<div><span class="key">apiVersion</span>: <span class="string">profile/v1</span></div>
-<div><span class="key">kind</span>: <span class="string">Engineer</span></div>
-<div><span class="key">metadata</span>:</div>
-<div class="indent1"><span class="key">name</span>: <span class="string">moses-sarpong</span></div>
-<div class="indent1"><span class="key">location</span>: <span class="string">remote-ready</span></div>
-<div><span class="key">spec</span>:</div>
-<div class="indent1"><span class="key">experience</span>: <span class="string">5+ years</span></div>
-<div class="indent1"><span class="key">certifications</span>:</div>
-<div class="indent2">- <span class="string">CKAD</span></div>
-<div class="indent1"><span class="key">focus</span>:</div>
-<div class="indent2">- <span class="string">agentic-ai</span></div>
-<div class="indent2">- <span class="string">kubernetes</span></div>
-<div class="indent2">- <span class="string">terraform</span></div>
-<div class="indent2">- <span class="string">aws</span></div>
-<div class="indent2">- <span class="string">ci-cd</span></div>
-<div class="indent1"><span class="key">status</span>: <span class="string">Open to opportunities</span><span class="cursor"></span></div>
+<div class="cmd"><span class="prompt">$</span><span class="typed">kubectl get engineer -o yaml</span></div>
+<div class="yl"><span class="key">apiVersion</span>: <span class="string">profile/v1</span></div>
+<div class="yl"><span class="key">kind</span>: <span class="string">Engineer</span></div>
+<div class="yl"><span class="key">metadata</span>:</div>
+<div class="yl indent1"><span class="key">name</span>: <span class="string">moses-sarpong</span></div>
+<div class="yl indent1"><span class="key">location</span>: <span class="string">remote-ready</span></div>
+<div class="yl"><span class="key">spec</span>:</div>
+<div class="yl indent1"><span class="key">experience</span>: <span class="string">5+ years</span></div>
+<div class="yl indent1"><span class="key">certifications</span>:</div>
+<div class="yl indent2">- <span class="string">CKAD</span></div>
+<div class="yl indent1"><span class="key">focus</span>:</div>
+<div class="yl indent2">- <span class="string">agentic-ai</span></div>
+<div class="yl indent2">- <span class="string">kubernetes</span></div>
+<div class="yl indent2">- <span class="string">terraform</span></div>
+<div class="yl indent2">- <span class="string">aws</span></div>
+<div class="yl indent2">- <span class="string">ci-cd</span></div>
+<div class="yl indent1"><span class="key">status</span>: <span class="string">Open to opportunities</span><span class="cursor"></span></div>
         </div>
       </div>
     </div>
+
   </div>
 </section>
 
 <div class="manifesto reveal">
   <div class="wrap">
-    <p><span class="manifesto-mark">▸</span>Resilience and repeatability aren't an afterthought — they're the platform. Every agent-drafted diff gets the same review bar as my own.</p>
+    <p><span class="manifesto-mark">▸</span>Resilience and repeatability aren't an afterthought — they're the platform. <span>Every agent-drafted diff gets the same review bar as my own.</span></p>
   </div>
 </div>
 
@@ -815,147 +1207,159 @@
     </div>
     <p class="infra-intro reveal">A snapshot of the real pipeline, not a live feed — click a node for the plan → diff → review behind it.</p>
 
-    <div class="theme-picker reveal">
-      <span class="prompt">$</span> theme --set
-      <div class="theme-swatches" role="group" aria-label="Color theme">
-        <button type="button" class="theme-swatch" data-theme="" aria-pressed="true" aria-label="Mission Control theme" style="background:linear-gradient(135deg, #0B1220 50%, #F2B705 50%)"></button>
-        <button type="button" class="theme-swatch" data-theme="terminal" aria-pressed="false" aria-label="Terminal theme" style="background:linear-gradient(135deg, #050A08 50%, #3DDC84 50%)"></button>
-        <button type="button" class="theme-swatch" data-theme="ember" aria-pressed="false" aria-label="Ember theme" style="background:linear-gradient(135deg, #170D0A 50%, #FF6B4A 50%)"></button>
-        <button type="button" class="theme-swatch" data-theme="arctic" aria-pressed="false" aria-label="Arctic theme" style="background:linear-gradient(135deg, #0A1420 50%, #5AC8FA 50%)"></button>
-      </div>
+    <div class="pipeline reveal" role="tablist" aria-label="Pipeline stages">
+      <button type="button" class="stage" role="tab" id="tab-github" aria-controls="panel-github" aria-selected="true">
+        <span class="stage-idx">01</span>
+        <span class="stage-icon"><svg class="icon"><use href="#i-branch"/></svg></span>
+        <span class="stage-name">GitHub</span>
+        <span class="stage-status">OPERATIONAL</span>
+      </button>
+      <span class="pipe" aria-hidden="true"></span>
+      <button type="button" class="stage" role="tab" id="tab-cicd" aria-controls="panel-cicd" aria-selected="false">
+        <span class="stage-idx">02</span>
+        <span class="stage-icon"><svg class="icon"><use href="#i-cicd"/></svg></span>
+        <span class="stage-name">CI/CD</span>
+        <span class="stage-status">DEPLOYED</span>
+      </button>
+      <span class="pipe" aria-hidden="true"></span>
+      <button type="button" class="stage" role="tab" id="tab-terraform" aria-controls="panel-terraform" aria-selected="false">
+        <span class="stage-idx">03</span>
+        <span class="stage-icon"><svg class="icon"><use href="#i-layers"/></svg></span>
+        <span class="stage-name">Terraform</span>
+        <span class="stage-status">OPERATIONAL</span>
+      </button>
+      <span class="pipe" aria-hidden="true"></span>
+      <button type="button" class="stage" role="tab" id="tab-aws" aria-controls="panel-aws" aria-selected="false">
+        <span class="stage-idx">04</span>
+        <span class="stage-icon"><svg class="icon"><use href="#i-cloud"/></svg></span>
+        <span class="stage-name">AWS</span>
+        <span class="stage-status">OPERATIONAL</span>
+      </button>
+      <span class="pipe" aria-hidden="true"></span>
+      <button type="button" class="stage" role="tab" id="tab-kubernetes" aria-controls="panel-kubernetes" aria-selected="false">
+        <span class="stage-idx">05</span>
+        <span class="stage-icon"><svg class="icon"><use href="#i-wheel"/></svg></span>
+        <span class="stage-name">Kubernetes</span>
+        <span class="stage-status">DEPLOYED</span>
+      </button>
+      <span class="pipe" aria-hidden="true"></span>
+      <button type="button" class="stage" role="tab" id="tab-monitoring" aria-controls="panel-monitoring" aria-selected="false">
+        <span class="stage-idx">06</span>
+        <span class="stage-icon"><svg class="icon"><use href="#i-pulse"/></svg></span>
+        <span class="stage-name">Monitoring</span>
+        <span class="stage-status">OPERATIONAL</span>
+      </button>
     </div>
 
-    <div class="infra-diagram reveal">
+    <div class="stage-panels">
 
-      <details class="infra-node">
-        <summary>
-          <span class="infra-icon">🔀</span>
-          <span class="infra-name">GitHub</span>
-          <span class="infra-status">OPERATIONAL</span>
-          <span class="infra-chevron"></span>
-        </summary>
-        <div class="infra-session">
-          <div class="infra-session-bar"><span class="prompt">$</span>branch → PR → review</div>
-          <dl>
+      <div class="stage-panel" role="tabpanel" id="panel-github" aria-labelledby="tab-github" tabindex="0">
+        <div class="panel-bar"><span><span class="prompt">$</span>branch → PR → review</span><span class="panel-step">stage 01/06</span></div>
+        <dl class="panel-body">
+          <div>
             <dt>Situation</dt>
             <dd>Every infrastructure change — Terraform, Helm, CI config — starts as a branch, never a direct edit to main.</dd>
+          </div>
+          <div>
             <dt>Action</dt>
             <dd>Claude Code drafts the diff when I'm directing it as an agent; an AI PR reviewer I built takes the first pass — GitHub MCP, ~80 repos, ~30 infra PRs a week — then I review every line before it merges, same bar whether the agent wrote it or I did.</dd>
+          </div>
+          <div class="result">
             <dt>Result</dt>
             <dd>A clean audit trail — every change traceable to a PR, a review, and a reason. The reviewer catches ~3 real issues a week (IAM widening, drift, unsafe Helm changes) before they merge.</dd>
-          </dl>
-        </div>
-      </details>
+          </div>
+        </dl>
+      </div>
 
-      <div class="infra-arrow">→</div>
-
-      <details class="infra-node">
-        <summary>
-          <span class="infra-icon">⚙️</span>
-          <span class="infra-name">CI/CD</span>
-          <span class="infra-status">DEPLOYED</span>
-          <span class="infra-chevron"></span>
-        </summary>
-        <div class="infra-session">
-          <div class="infra-session-bar"><span class="prompt">$</span>build → test → promote → gate</div>
-          <dl>
+      <div class="stage-panel" role="tabpanel" id="panel-cicd" aria-labelledby="tab-cicd" tabindex="0">
+        <div class="panel-bar"><span><span class="prompt">$</span>build → test → promote → gate</span><span class="panel-step">stage 02/06</span></div>
+        <dl class="panel-body">
+          <div>
             <dt>Situation</dt>
             <dd>Manual deploys don't scale past a couple of services, and catching problems after production is expensive.</dd>
+          </div>
+          <div>
             <dt>Action</dt>
             <dd>GitHub Actions builds and tests in dev, auto-promotes to staging, and gates production behind manual approval. Validation — Terraform plan/validate, app tests, image checks, deployment health checks — happens as early as possible.</dd>
+          </div>
+          <div class="result">
             <dt>Result</dt>
             <dd>Staging ships daily, production about twice a week, with OIDC federation instead of static AWS keys in the pipeline.</dd>
-          </dl>
-        </div>
-      </details>
+          </div>
+        </dl>
+      </div>
 
-      <div class="infra-arrow">→</div>
-
-      <details class="infra-node">
-        <summary>
-          <span class="infra-icon">🏗️</span>
-          <span class="infra-name">Terraform</span>
-          <span class="infra-status">OPERATIONAL</span>
-          <span class="infra-chevron"></span>
-        </summary>
-        <div class="infra-session">
-          <div class="infra-session-bar"><span class="prompt">$</span>plan → apply (agent-directed)</div>
-          <dl>
+      <div class="stage-panel" role="tabpanel" id="panel-terraform" aria-labelledby="tab-terraform" tabindex="0">
+        <div class="panel-bar"><span><span class="prompt">$</span>plan → apply (agent-directed)</span><span class="panel-step">stage 03/06</span></div>
+        <dl class="panel-body">
+          <div>
             <dt>Situation</dt>
             <dd>Directed Claude Code to add a VPC endpoint as part of the Gateway API migration (see Kubernetes).</dd>
+          </div>
+          <div>
             <dt>Action</dt>
             <dd>The agent didn't check what already existed and wrote a duplicate. <code>terraform plan</code> surfaced the conflict before apply — caught in review.</dd>
+          </div>
+          <div class="result">
             <dt>Result</dt>
             <dd>Zero blast radius — never touched real infra. Changed the workflow afterward: the agent now checks existing state before writing a new resource.</dd>
-          </dl>
-        </div>
-      </details>
+          </div>
+        </dl>
+      </div>
 
-      <div class="infra-arrow">→</div>
-
-      <details class="infra-node">
-        <summary>
-          <span class="infra-icon">☁️</span>
-          <span class="infra-name">AWS</span>
-          <span class="infra-status">OPERATIONAL</span>
-          <span class="infra-chevron"></span>
-        </summary>
-        <div class="infra-session">
-          <div class="infra-session-bar"><span class="prompt">$</span>aws sts assume-role (OIDC)</div>
-          <dl>
+      <div class="stage-panel" role="tabpanel" id="panel-aws" aria-labelledby="tab-aws" tabindex="0">
+        <div class="panel-bar"><span><span class="prompt">$</span>aws sts assume-role (OIDC)</span><span class="panel-step">stage 04/06</span></div>
+        <dl class="panel-body">
+          <div>
             <dt>Situation</dt>
             <dd>CI/CD used long-lived static AWS access keys — a standing credential-exposure risk.</dd>
+          </div>
+          <div>
             <dt>Action</dt>
             <dd>Replaced them with OIDC federation. GitHub Actions now assumes a scoped IAM role via the cluster's OIDC provider on each run instead of storing a secret.</dd>
+          </div>
+          <div class="result">
             <dt>Result</dt>
             <dd>No long-lived AWS credentials left in CI/CD, across the whole multi-tenant platform.</dd>
-          </dl>
-        </div>
-      </details>
+          </div>
+        </dl>
+      </div>
 
-      <div class="infra-arrow">→</div>
-
-      <details class="infra-node">
-        <summary>
-          <span class="infra-icon">☸️</span>
-          <span class="infra-name">Kubernetes</span>
-          <span class="infra-status">DEPLOYED</span>
-          <span class="infra-chevron"></span>
-        </summary>
-        <div class="infra-session">
-          <div class="infra-session-bar"><span class="prompt">$</span>helm upgrade --install</div>
-          <dl>
+      <div class="stage-panel" role="tabpanel" id="panel-kubernetes" aria-labelledby="tab-kubernetes" tabindex="0">
+        <div class="panel-bar"><span><span class="prompt">$</span>helm upgrade --install</span><span class="panel-step">stage 05/06</span></div>
+        <dl class="panel-body">
+          <div>
             <dt>Situation</dt>
             <dd>One shared, centrally-controlled ingress-nginx config routed every team's traffic — a routing problem for one team could affect all of them.</dd>
+          </div>
+          <div>
             <dt>Action</dt>
             <dd>Led a ~2-week migration to Gateway API + ALB, giving each team its own routing rules. Planned it stage by stage with Claude Code, diff reviewed before anything applied, coordinated with a 6-person team.</dd>
+          </div>
+          <div class="result">
             <dt>Result</dt>
             <dd>Routing issues now stay scoped to the team that caused them. 6-cluster multi-tenant EKS platform, 50+ microservices, ~15 engineering teams, all on Terraform and Helm.</dd>
-          </dl>
-        </div>
-      </details>
+          </div>
+        </dl>
+      </div>
 
-      <div class="infra-arrow">→</div>
-
-      <details class="infra-node">
-        <summary>
-          <span class="infra-icon">📊</span>
-          <span class="infra-name">Monitoring</span>
-          <span class="infra-status">OPERATIONAL</span>
-          <span class="infra-chevron"></span>
-        </summary>
-        <div class="infra-session">
-          <div class="infra-session-bar"><span class="prompt">$</span>datadog alert → root-cause → resolve</div>
-          <dl>
+      <div class="stage-panel" role="tabpanel" id="panel-monitoring" aria-labelledby="tab-monitoring" tabindex="0">
+        <div class="panel-bar"><span><span class="prompt">$</span>datadog alert → root-cause → resolve</span><span class="panel-step">stage 06/06</span></div>
+        <dl class="panel-body">
+          <div>
             <dt>Situation</dt>
             <dd>Customers couldn't reach the application — a full external-facing outage, on the ALB from the Gateway API migration.</dd>
+          </div>
+          <div>
             <dt>Action</dt>
             <dd>A Datadog alert paged me directly. Reviewed the ALB's listener and routing rules and found requests being routed incorrectly.</dd>
+          </div>
+          <div class="result">
             <dt>Result</dt>
             <dd>Fixed in about 15 minutes, alert to resolution. The dashboards and alerts themselves are self-built — I configure the thresholds and page routing. Since then I've also built an AI incident-diagnostic workflow that correlates pod state, deployment history, and Terraform changes to point at the likely root cause — a human still drives the fix.</dd>
-          </dl>
-        </div>
-      </details>
+          </div>
+        </dl>
+      </div>
 
     </div>
   </div>
@@ -969,51 +1373,51 @@
     </div>
     <div class="skills-grid">
 
-      <div class="skill-card reveal">
+      <div class="card skill-card featured reveal">
         <div class="skill-comment"># agentic-ai</div>
-        <div class="skill-head"><span class="skill-icon">🤖</span><h3>Agentic AI</h3></div>
+        <div class="skill-head"><span class="skill-icon"><svg class="icon"><use href="#i-bot"/></svg></span><h3>Agentic AI</h3></div>
         <p>Claude Code as a plan-reviewed agent on live Terraform/Helm changes — plus an AI PR reviewer (GitHub MCP, 4 specialized skills) and an incident-diagnostic workflow, both self-built</p>
       </div>
 
-      <div class="skill-card reveal">
+      <div class="card skill-card reveal">
         <div class="skill-comment"># aws</div>
-        <div class="skill-head"><span class="skill-icon">☁️</span><h3>AWS</h3></div>
+        <div class="skill-head"><span class="skill-icon"><svg class="icon"><use href="#i-cloud"/></svg></span><h3>AWS</h3></div>
         <p>Cloud-native infrastructure across EC2, VPC, IAM, S3, and Load Balancers</p>
       </div>
 
-      <div class="skill-card reveal">
+      <div class="card skill-card reveal">
         <div class="skill-comment"># docker</div>
-        <div class="skill-head"><span class="skill-icon">🐳</span><h3>Docker</h3></div>
+        <div class="skill-head"><span class="skill-icon"><svg class="icon"><use href="#i-box"/></svg></span><h3>Docker</h3></div>
         <p>Containerized app delivery with Docker images, Compose, and lifecycle management</p>
       </div>
 
-      <div class="skill-card reveal">
+      <div class="card skill-card reveal">
         <div class="skill-comment"># kubernetes</div>
-        <div class="skill-head"><span class="skill-icon">☸️</span><h3>Kubernetes</h3></div>
+        <div class="skill-head"><span class="skill-icon"><svg class="icon"><use href="#i-wheel"/></svg></span><h3>Kubernetes</h3></div>
         <p>Production workload orchestration — Deployments, Services, Ingress, Gateway API, Secrets</p>
       </div>
 
-      <div class="skill-card reveal">
+      <div class="card skill-card reveal">
         <div class="skill-comment"># terraform</div>
-        <div class="skill-head"><span class="skill-icon">🏗️</span><h3>Terraform</h3></div>
+        <div class="skill-head"><span class="skill-icon"><svg class="icon"><use href="#i-layers"/></svg></span><h3>Terraform</h3></div>
         <p>Infrastructure as Code with reusable modules and remote state backends</p>
       </div>
 
-      <div class="skill-card reveal">
+      <div class="card skill-card reveal">
         <div class="skill-comment"># ci-cd</div>
-        <div class="skill-head"><span class="skill-icon">⚙️</span><h3>CI/CD</h3></div>
+        <div class="skill-head"><span class="skill-icon"><svg class="icon"><use href="#i-cicd"/></svg></span><h3>CI/CD</h3></div>
         <p>End-to-end automation pipelines built on GitHub Actions</p>
       </div>
 
-      <div class="skill-card reveal">
+      <div class="card skill-card reveal">
         <div class="skill-comment"># monitoring</div>
-        <div class="skill-head"><span class="skill-icon">📊</span><h3>Monitoring</h3></div>
+        <div class="skill-head"><span class="skill-icon"><svg class="icon"><use href="#i-pulse"/></svg></span><h3>Monitoring</h3></div>
         <p>Production observability with Datadog and CloudWatch — dashboards, alerting, and direct on-call paging</p>
       </div>
 
-      <div class="skill-card reveal">
+      <div class="card skill-card reveal">
         <div class="skill-comment"># scripting</div>
-        <div class="skill-head"><span class="skill-icon">💻</span><h3>Programming</h3></div>
+        <div class="skill-head"><span class="skill-icon"><svg class="icon"><use href="#i-terminal"/></svg></span><h3>Programming</h3></div>
         <p>Automation scripting and tooling in Python, Bash, and Linux</p>
       </div>
 
@@ -1027,11 +1431,23 @@
       <span class="kind">kind: <b>Certifications</b></span>
       <h2>Credentials</h2>
     </div>
-    <div class="cert-card reveal">
-      <div class="cert-badge">CKAD</div>
-      <div class="cert-info">
-        <h3>Certified Kubernetes Application Developer</h3>
-        <p>Cloud Native Computing Foundation (CNCF)</p>
+    <div class="card cert-card reveal">
+      <div class="cert-main">
+        <div class="cert-badge">CKAD</div>
+        <div class="cert-info">
+          <h3>Certified Kubernetes Application Developer</h3>
+          <p>Cloud Native Computing Foundation (CNCF)</p>
+        </div>
+      </div>
+      <div class="cert-domains">
+        <span class="cert-domains-label"># exam domains</span>
+        <ul class="chips">
+          <li class="chip">Application Design &amp; Build</li>
+          <li class="chip">Application Deployment</li>
+          <li class="chip">Observability &amp; Maintenance</li>
+          <li class="chip">Environment, Configuration &amp; Security</li>
+          <li class="chip">Services &amp; Networking</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -1045,34 +1461,63 @@
     </div>
     <div class="projects-list">
 
-      <div class="project-card reveal">
+      <div class="card project-card featured reveal">
+        <div>
+          <span class="featured-tag">featured</span>
+          <div class="project-cmd"><span class="prompt">$</span>claude-code run ai-pr-review</div>
+          <h3>AI PR Reviewer</h3>
+          <p>Built an AI PR reviewer with Claude Code and GitHub MCP across ~80 repositories — ~30 infra PRs a week, catching ~3 real issues weekly (IAM widening, drift, unsafe Helm changes) before merge. Backed by four specialized Claude Code skills: Terraform plan review, Kubernetes manifest linting, RBAC audit, and Gateway API/Helm validation. Cut review turnaround from ~1 day to same-day and saves ~5 hours a week.</p>
+        </div>
+        <div class="metrics">
+          <div class="metric"><b>~80</b><span>repositories covered</span></div>
+          <div class="metric"><b>~30</b><span>infra PRs a week</span></div>
+          <div class="metric"><b>~3</b><span>real issues caught weekly</span></div>
+          <div class="metric"><b>~5 hrs</b><span>saved a week</span></div>
+        </div>
+      </div>
+
+      <div class="card project-card reveal">
         <div class="project-cmd"><span class="prompt">$</span>kubectl apply -f gateway-api-migration.yaml</div>
         <h3>Gateway API Migration</h3>
         <p>Led a Terraform/Helm migration at vAuto from a single shared ingress-nginx config to per-team Gateway API + ALB routing — directed Claude Code through a plan-first, diff-reviewed process, shipped in ~2 weeks across a 6-person team.</p>
+        <ul class="chips">
+          <li class="chip"><b>~2 weeks</b> to ship</li>
+          <li class="chip"><b>6</b>-person team</li>
+          <li class="chip">per-team routing</li>
+        </ul>
       </div>
 
-      <div class="project-card reveal">
+      <div class="card project-card reveal">
         <div class="project-cmd"><span class="prompt">$</span>terraform apply -var-file=aws-infra.tfvars</div>
         <h3>EKS Platform on Terraform</h3>
         <p>Standardized a multi-tenant AWS platform across 6 EKS clusters and 50+ microservices at vAuto using reusable Terraform modules, serving about 15 engineering teams on a consistent provisioning model.</p>
+        <ul class="chips">
+          <li class="chip"><b>6</b> EKS clusters</li>
+          <li class="chip"><b>50+</b> microservices</li>
+          <li class="chip"><b>~15</b> teams</li>
+        </ul>
       </div>
 
-      <div class="project-card reveal">
-        <div class="project-cmd"><span class="prompt">$</span>claude-code run ai-pr-review</div>
-        <h3>AI PR Reviewer</h3>
-        <p>Built an AI PR reviewer with Claude Code and GitHub MCP across ~80 repositories — ~30 infra PRs a week, catching ~3 real issues weekly (IAM widening, drift, unsafe Helm changes) before merge. Backed by four specialized Claude Code skills: Terraform plan review, Kubernetes manifest linting, RBAC audit, and Gateway API/Helm validation. Cut review turnaround from ~1 day to same-day and saves ~5 hours a week.</p>
-      </div>
-
-      <div class="project-card reveal">
+      <div class="card project-card reveal">
         <div class="project-cmd"><span class="prompt">$</span>claude-code run incident-diagnostics</div>
         <h3>AI Incident-Diagnostic Workflow</h3>
         <p>Built an AI workflow that correlates Kubernetes pod state, GitHub/deployment history, and Terraform changes to point at the most likely production root cause — a human still drives the diagnosis and fix from there.</p>
+        <ul class="chips">
+          <li class="chip">pod state</li>
+          <li class="chip">deployment history</li>
+          <li class="chip">Terraform changes</li>
+          <li class="chip">human in the loop</li>
+        </ul>
       </div>
 
-      <div class="project-card reveal">
+      <div class="card project-card reveal">
         <div class="project-cmd"><span class="prompt">$</span>datadog alert → root-cause → resolve</div>
         <h3>ALB Incident Response</h3>
         <p>Diagnosed a full customer-facing outage in ~15 minutes — Datadog alert to a misrouted ALB listener rule to fix — on the cluster from the Gateway API migration above.</p>
+        <ul class="chips">
+          <li class="chip"><b>~15 min</b> alert → fix</li>
+          <li class="chip">customer-facing outage</li>
+        </ul>
       </div>
 
     </div>
@@ -1098,53 +1543,133 @@
 </section>
 
 <footer>
-  <div class="wrap">
-    © 2026 Moses Sarpong · built with care, deployed with confidence
+  <div class="wrap footer-row">
+    <span>© 2026 Moses Sarpong · built with care, deployed with confidence</span>
+    <a href="#top">↑ back to top</a>
   </div>
 </footer>
 
 <script>
-  const navToggle = document.querySelector('.nav-toggle');
-  const navEl = document.querySelector('nav');
-  if (navToggle && navEl) {
-    navToggle.addEventListener('click', () => {
-      const open = navEl.classList.toggle('open');
-      navToggle.setAttribute('aria-expanded', open);
-    });
-    document.querySelectorAll('.nav-links a').forEach((link) => {
-      link.addEventListener('click', () => navEl.classList.remove('open'));
-    });
-  }
+  (function(){
+    const root = document.documentElement;
 
-  const themeSwatches = document.querySelectorAll('.theme-swatch');
-  function setActiveSwatch(theme){
+    // ---- Mobile nav ----
+    const navToggle = document.querySelector('.nav-toggle');
+    const navEl = document.querySelector('nav');
+    function setNav(open){
+      navEl.classList.toggle('open', open);
+      navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    if (navToggle && navEl) {
+      navToggle.addEventListener('click', () => setNav(!navEl.classList.contains('open')));
+      document.querySelectorAll('.nav-links a').forEach((link) => {
+        link.addEventListener('click', () => setNav(false));
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') setNav(false);
+      });
+    }
+
+    // ---- Theme picker ----
+    const themeSwatches = document.querySelectorAll('.theme-swatch');
+    function setActiveSwatch(theme){
+      themeSwatches.forEach((btn) => {
+        btn.setAttribute('aria-pressed', btn.dataset.theme === theme ? 'true' : 'false');
+      });
+    }
+    setActiveSwatch(root.getAttribute('data-theme') || '');
     themeSwatches.forEach((btn) => {
-      btn.setAttribute('aria-pressed', btn.dataset.theme === theme ? 'true' : 'false');
+      btn.addEventListener('click', () => {
+        const theme = btn.dataset.theme;
+        if (theme) {
+          root.setAttribute('data-theme', theme);
+        } else {
+          root.removeAttribute('data-theme');
+        }
+        try { localStorage.setItem('theme', theme); } catch (e) {}
+        setActiveSwatch(theme);
+      });
     });
-  }
-  setActiveSwatch(document.documentElement.getAttribute('data-theme') || '');
-  themeSwatches.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const theme = btn.dataset.theme;
-      if (theme) {
-        document.documentElement.setAttribute('data-theme', theme);
-      } else {
-        document.documentElement.removeAttribute('data-theme');
-      }
-      try { localStorage.setItem('theme', theme); } catch (e) {}
-      setActiveSwatch(theme);
-    });
-  });
 
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if(e.isIntersecting){
-        e.target.classList.add('in');
-        io.unobserve(e.target);
-      }
+    // ---- Pipeline: one stage open at a time, arrow keys move between them ----
+    const stages = Array.from(document.querySelectorAll('.stage'));
+    const panels = stages.map((s) => document.getElementById(s.getAttribute('aria-controls')));
+    function selectStage(index, focus){
+      stages.forEach((stage, n) => {
+        const on = n === index;
+        stage.setAttribute('aria-selected', on ? 'true' : 'false');
+        stage.tabIndex = on ? 0 : -1;
+        if (panels[n]) panels[n].hidden = !on;
+      });
+      if (focus) stages[index].focus();
+    }
+    stages.forEach((stage, n) => {
+      stage.addEventListener('click', () => selectStage(n));
+      stage.addEventListener('keydown', (e) => {
+        let next = null;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (n + 1) % stages.length;
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (n - 1 + stages.length) % stages.length;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = stages.length - 1;
+        if (next === null) return;
+        e.preventDefault();
+        selectStage(next, true);
+      });
     });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    if (stages.length) selectStage(0);
+
+    // ---- Terminal card: number the YAML lines so they print in order ----
+    document.querySelectorAll('.manifest .yl').forEach((line, i) => line.style.setProperty('--i', i));
+
+    // ---- Scroll reveal ----
+    const revealEls = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      revealEls.forEach((el) => io.observe(el));
+
+      // ---- Highlight the nav link for the section in view ----
+      const spyLinks = new Map();
+      document.querySelectorAll('.nav-links a[href^="#"]').forEach((a) => {
+        spyLinks.set(a.getAttribute('href').slice(1), a);
+      });
+      const spy = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          spyLinks.forEach((a) => a.classList.remove('active'));
+          const link = spyLinks.get(e.target.id);
+          if (link) link.classList.add('active');
+        });
+      }, { rootMargin: '-40% 0px -55% 0px' });
+      document.querySelectorAll('section[id]').forEach((s) => spy.observe(s));
+    } else {
+      revealEls.forEach((el) => el.classList.add('in'));
+    }
+
+    // ---- Scroll progress bar ----
+    const progress = document.querySelector('.progress');
+    let ticking = false;
+    function updateProgress(){
+      const max = root.scrollHeight - window.innerHeight;
+      progress.style.setProperty('--p', max > 0 ? Math.min(1, window.scrollY / max) : 0);
+      ticking = false;
+    }
+    if (progress) {
+      window.addEventListener('scroll', () => {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(updateProgress);
+      }, { passive: true });
+      window.addEventListener('resize', updateProgress);
+      updateProgress();
+    }
+  })();
 </script>
 
 </body>
